@@ -126,4 +126,19 @@ PNG illinify(PNG image) {
  *
  * @return The watermarked image.
  */
-PNG watermark(PNG firstImage, PNG secondImage) { return firstImage; }
+PNG watermark(PNG firstImage, PNG secondImage) {
+  /// This function is already written for you so you can see how to
+  /// interact with our PNG class.
+  for (unsigned x = 0; x < secondImage.width(); x++) {
+    for (unsigned y = 0; y < secondImage.height(); y++) {
+      HSLAPixel& pixelsecondImage = secondImage.getPixel(x, y);
+      HSLAPixel& pixelfirstImage = firstImage.getPixel(x, y);
+
+      // Increasing 0.2 in the first image luminance if second image luminance
+      // is equal to 1
+      if (pixelsecondImage.l == 1) pixelfirstImage.l += 0.2;
+    }
+  }
+
+  return firstImage;
+}
