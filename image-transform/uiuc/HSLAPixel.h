@@ -12,8 +12,13 @@
 
 namespace uiuc {
 
-  // Put your HSLAPixel class definition here.
-  // (Remember to end it with a semicolon!)
+// Put your HSLAPixel class definition here.
+// (Remember to end it with a semicolon!)
 
+class HSLAPixel {
+ public:
+  // HSLA Values
+  double h, s, l, a;
+};
 
-}
+}  // namespace uiuc
