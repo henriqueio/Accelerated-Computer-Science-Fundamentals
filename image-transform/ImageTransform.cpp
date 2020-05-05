@@ -100,7 +100,19 @@ PNG createSpotlight(PNG image, int centerX, int centerY) {
  *
  * @return The illinify'd image.
  **/
-PNG illinify(PNG image) { return image; }
+PNG illinify(PNG image) {
+  /// This function is already written for you so you can see how to
+  /// interact with our PNG class.
+  for (unsigned x = 0; x < image.width(); x++) {
+    for (unsigned y = 0; y < image.height(); y++) {
+      HSLAPixel& pixel = image.getPixel(x, y);
+
+      // Check if the current pixel Hue is closer to blue or orange
+      pixel.h = (pixel.h > 90 && pixel.h < 270) ? 216 : 11;
+    }
+  }
+  return image;
+}
 
 /**
  * Returns an immge that has been watermarked by another image.
