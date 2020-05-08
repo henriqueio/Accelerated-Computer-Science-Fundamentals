@@ -3,7 +3,7 @@
  * University of Illinois CS 400, MOOC 2, Week 1: Linked Lists
  *
  * @author Eric Huber
-**/
+ **/
 
 #include <iostream>
 #include <string>
@@ -37,18 +37,26 @@ void errorReaction(std::string msg) {
   // If you want to throw an exception and stop the program immediately:
   // throw std::runtime_error(msg);
   // If you want to display a warning and keep going:
-  std::cout << std::endl << "WARNING: " << msg << std::endl << std::endl;;
+  std::cout << std::endl << "WARNING: " << msg << std::endl << std::endl;
+  ;
 }
 
 // These tests aren't very exhaustive of the student exercise code.
 // They are more of a sanity check on the LinkedList class itself.
 void informalTests() {
-
-  std::cout << "Running a few informal tests. Feel free to study these or edit them." << std::endl;
-  std::cout << "The unit tests in the tests/ subdirectory are much more exhaustive!" << std::endl;
-  std::cout << "You can run those by doing: make clean && make test && ./test" << std::endl;
-  std::cout << "Remember that when you're ready to submit, you should do: make zip" << std::endl;
-  std::cout << "That will package the zip file properly for submission." << std::endl;
+  std::cout
+      << "Running a few informal tests. Feel free to study these or edit them."
+      << std::endl;
+  std::cout
+      << "The unit tests in the tests/ subdirectory are much more exhaustive!"
+      << std::endl;
+  std::cout << "You can run those by doing: make clean && make test && ./test"
+            << std::endl;
+  std::cout
+      << "Remember that when you're ready to submit, you should do: make zip"
+      << std::endl;
+  std::cout << "That will package the zip file properly for submission."
+            << std::endl;
 
   {
     std::cout << std::endl << "Testing splitHalves():" << std::endl;
@@ -62,14 +70,15 @@ void informalTests() {
     std::cout << "Size: " << l.size() << std::endl;
     LinkedList<LinkedList<int>> halves = l.splitHalves();
     std::cout << "Front half: " << halves.front()
-      << " Back half: " << halves.back() << std::endl;
+              << " Back half: " << halves.back() << std::endl;
 
     LinkedList<int> expectedFrontHalf;
     expectedFrontHalf.pushBack(5);
     expectedFrontHalf.pushBack(6);
     expectedFrontHalf.pushBack(7);
     std::cout << "Expected front half: " << expectedFrontHalf << std::endl;
-    if (expectedFrontHalf != halves.front()) errorReaction("front half is wrong");
+    if (expectedFrontHalf != halves.front())
+      errorReaction("front half is wrong");
     LinkedList<int> expectedBackHalf;
     expectedBackHalf.pushBack(8);
     expectedBackHalf.pushBack(9);
@@ -78,7 +87,8 @@ void informalTests() {
   }
 
   {
-    std::cout << std::endl << "Testing explode() and iterating with pointers:" << std::endl;
+    std::cout << std::endl
+              << "Testing explode() and iterating with pointers:" << std::endl;
     LinkedList<int> l;
     l.pushBack(5);
     l.pushBack(6);
@@ -95,18 +105,20 @@ void informalTests() {
     auto nodePtr = lists.getHeadPtr();
     while (nodePtr) {
       auto list = nodePtr->data;
-      if (list.size() != 1) errorReaction("exploded list item should have size 1");
+      if (list.size() != 1)
+        errorReaction("exploded list item should have size 1");
       std::cout << "List: " << list << std::endl;
       // std::cout << "Size: " << list.size() << std::endl << std::endl;
       nodePtr = nodePtr->next;
     }
 
     // You can also avoid dealing with pointers entirely by using the
-    // push and pop interface to cycle through the list contents. (This is somewhat
-    // less efficient because it creates and destroys copies of the data throughout
-    // the process of shuffling the list.)
-    std::cout << "Fake iteration done by popping and pushing items:" << std::endl;
-    for (int i=0; i<lists.size(); i++) {
+    // push and pop interface to cycle through the list contents. (This is
+    // somewhat less efficient because it creates and destroys copies of the
+    // data throughout the process of shuffling the list.)
+    std::cout << "Fake iteration done by popping and pushing items:"
+              << std::endl;
+    for (int i = 0; i < lists.size(); i++) {
       auto list = lists.front();
       std::cout << "List: " << list << std::endl;
       // std::cout << "Size: " << list.size() << std::endl << std::endl;
@@ -149,7 +161,8 @@ void informalTests() {
     std::cout << "Expected: " << expected << std::endl;
     if (l2 != expected) errorReaction("wrong result");
 
-    std::cout << "Checking equivalency:" << std::boolalpha << (l == l2) << std::endl;
+    std::cout << "Checking equivalency:" << std::boolalpha << (l == l2)
+              << std::endl;
   }
 
   {
@@ -168,7 +181,7 @@ void informalTests() {
     auto l2 = l.insertionSort();
     std::cout << "(After) List: " << l2 << std::endl;
     std::cout << "isSorted: " << std::boolalpha << l2.isSorted() << std::endl;
-    
+
     LinkedList<int> expected;
     expected.pushBack(-1);
     expected.pushBack(4);
@@ -181,7 +194,8 @@ void informalTests() {
 
     std::cout << "Expected: " << expected << std::endl;
 
-    if (l2 != expected) errorReaction("Bug in insertionSort (check insertOrdered first)");
+    if (l2 != expected)
+      errorReaction("Bug in insertionSort (check insertOrdered first)");
     if (l2 == expected && !l2.isSorted()) errorReaction("Bug in isSorted");
   }
 
@@ -241,7 +255,8 @@ void informalTests() {
     std::cout << "(After) List: " << l << std::endl;
     std::cout << "isSorted: " << std::boolalpha << l.isSorted() << std::endl;
     std::cout << "Expected: " << expected << std::endl;
-    if (l != expected) errorReaction("Bug in mergeSortRecursive (check merge first)");
+    if (l != expected)
+      errorReaction("Bug in mergeSortRecursive (check merge first)");
   }
 
   {
@@ -271,11 +286,13 @@ void informalTests() {
     std::cout << "(After) List: " << l << std::endl;
     std::cout << "isSorted: " << std::boolalpha << l.isSorted() << std::endl;
     std::cout << "Expected: " << expected << std::endl;
-    if (l != expected) errorReaction("Bug in mergeSortIterative (check merge first)");
+    if (l != expected)
+      errorReaction("Bug in mergeSortIterative (check merge first)");
   }
 
-  std::cout << "\n\nInformal tests finished without crashing, but the output may have been incorrect."
-    << "\nPlease scroll to the top of the output to read the diagnostics." << std::endl;
-
+  std::cout
+      << "\n\nInformal tests finished without crashing, but the output may "
+         "have been incorrect."
+      << "\nPlease scroll to the top of the output to read the diagnostics."
+      << std::endl;
 }
-
