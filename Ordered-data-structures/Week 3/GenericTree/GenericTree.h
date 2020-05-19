@@ -5,18 +5,18 @@
  *
  * @author Eric Huber
  *
-**/
+ **/
 
 // We use the pragma once directive to ensure that this header won't
 // be included multiple times per compilation unit by mistake.
 #pragma once
 
-#include <stdexcept> // for std::runtime_error
-#include <stack> // for std::stack
-#include <queue> // for std::queue
-#include <vector> // for std::vector
-#include <iostream> // for std::cerr, std::cout
-#include <ostream> // for std::ostream
+#include <iostream>   // for std::cerr, std::cout
+#include <ostream>    // for std::ostream
+#include <queue>      // for std::queue
+#include <stack>      // for std::stack
+#include <stdexcept>  // for std::runtime_error
+#include <vector>     // for std::vector
 
 // -------------------------------------------------------------------
 // GenericTree<T> class
@@ -28,7 +28,7 @@
 // the leftmost child listed first. However, our print functionality for the
 // text terminal will output trees in a vertical orientation, where the
 // "leftmost" branches are output first, at the top.
-// 
+//
 // You do not need to edit this file for the assignment. You only need
 // to make edits in GenericTreeExercises.h. However, you are welcome
 // to study this file for insight about how the class works, as well as
@@ -36,26 +36,25 @@
 
 template <typename T>
 class GenericTree {
-public:
-
+ public:
   // This toggles whether to output extra debugging messages.
   // We'll set it to false by default.
   bool showDebugMessages;
 
   // An internal class type for tree nodes.
   class TreeNode {
-  public:
+   public:
     // Pointer to the node's parent (nullptr if there is no parent)
     TreeNode* parentPtr;
-    
+
     // List of pointers to this node's children, if any.
     // This will automatically be constructed empty by default.
     // This could be implemented with something other than std::vector,
     // such as std::list or std::set. There are various advantages to
     // different strategies, depending on how you design the tree class
     // functions.
-    std::vector< TreeNode* > childrenPtrs;
-    
+    std::vector<TreeNode*> childrenPtrs;
+
     // The actual node data. It's an actual copy of the node's data,
     // not just a pointer or reference. This is slightly different
     // from the binary tree structure presented in lecture.
@@ -91,16 +90,14 @@ public:
     // the members of the node class will have their own destructors
     // automatically called afterward.
     ~TreeNode() {}
-
   };
 
-private:
+ private:
   // The tree has this pointer to its root node as an entry point,
   // which should be set to nullptr when the tree is empty.
   TreeNode* rootNodePtr;
 
-public:
-
+ public:
   // A warning about best practices for designing a class interface:
   // The next few functions below are unsafe because they use raw
   // pointers to the class internal structure as public input or output.
@@ -114,9 +111,7 @@ public:
   TreeNode* createRoot(const T& rootData);
 
   // Get a copy of the raw pointer to the root node of this class instance.
-  TreeNode* getRootPtr() {
-    return rootNodePtr;
-  }
+  TreeNode* getRootPtr() { return rootNodePtr; }
 
   // Deallocate the entire subtree beginning with the intended node;
   // this includes the specified node as well as all of its decendents.
@@ -139,9 +134,7 @@ public:
 
   // Parameter constructor: Creates an empty tree, then adds a root node
   // with the provided data.
-  GenericTree(const T& rootData) : GenericTree() {
-    createRoot(rootData);
-  }
+  GenericTree(const T& rootData) : GenericTree() { createRoot(rootData); }
 
   // Copy constructor: We will disable it.
   GenericTree(const GenericTree& other) = delete;
@@ -159,18 +152,17 @@ public:
     // rootNodePtr does indeed get reset, for safety.
 
     if (rootNodePtr) {
-      throw std::runtime_error("clear() detected that deleteSubtree() had not reset rootNodePtr");
+      throw std::runtime_error(
+          "clear() detected that deleteSubtree() had not reset rootNodePtr");
     }
   }
 
   // Destructor
-  ~GenericTree() {
-    clear();
-  }
+  ~GenericTree() { clear(); }
 
-  // Print the tree to the output stream (for example, std::cout) in a vertical text format
+  // Print the tree to the output stream (for example, std::cout) in a vertical
+  // text format
   std::ostream& Print(std::ostream& os) const;
-
 };
 
 // Operator overload that allows stream output syntax
@@ -224,15 +216,17 @@ std::ostream& operator<<(std::ostream& os, const GenericTree<T>& tree) {
 // is a type by writing "typename" before it as well.
 
 template <typename T>
-typename GenericTree<T>::TreeNode* GenericTree<T>::createRoot(const T& rootData) {
-  
+typename GenericTree<T>::TreeNode* GenericTree<T>::createRoot(
+    const T& rootData) {
   // If the rootNodePtr member variable already has a nonzero value assigned,
   // then the root node already exists, and it's an error to try to recreate it.
   if (nullptr != rootNodePtr) {
-    // We don't always need to import <string> just to reuse a short error message.
-    // We can store short strings as constant arrays of char type at compile time.
-    // (A constexpr is similar to const, but must be entirely evaluated at compile time.)
-    constexpr char ERROR_MESSAGE[] = "Tried to createRoot when root already exists";
+    // We don't always need to import <string> just to reuse a short error
+    // message. We can store short strings as constant arrays of char type at
+    // compile time. (A constexpr is similar to const, but must be entirely
+    // evaluated at compile time.)
+    constexpr char ERROR_MESSAGE[] =
+        "Tried to createRoot when root already exists";
     // Display the error message to the standard error stream.
     std::cerr << ERROR_MESSAGE << std::endl;
     // Throw an exception containing the error message.
@@ -254,8 +248,8 @@ typename GenericTree<T>::TreeNode* GenericTree<T>::createRoot(const T& rootData)
 }
 
 template <typename T>
-typename GenericTree<T>::TreeNode* GenericTree<T>::TreeNode::addChild(const T& childData) {
-
+typename GenericTree<T>::TreeNode* GenericTree<T>::TreeNode::addChild(
+    const T& childData) {
   // We prepare a new child node with the given data.
   TreeNode* newChildPtr = new TreeNode(childData);
 
@@ -265,7 +259,7 @@ typename GenericTree<T>::TreeNode* GenericTree<T>::TreeNode::addChild(const T& c
 
   // Assign this current node as the new child's parent pointer.
   newChildPtr->parentPtr = this;
-  
+
   // This node (the parent) already has a data structure to keep track
   // of its children pointers. We add the new child to the list.
   childrenPtrs.push_back(newChildPtr);
@@ -276,7 +270,6 @@ typename GenericTree<T>::TreeNode* GenericTree<T>::TreeNode::addChild(const T& c
 
 template <typename T>
 void GenericTree<T>::deleteSubtree(TreeNode* targetRoot) {
-
   // Deleting a subtree requires deallocating the memory used by the nodes,
   // but since the pointers are stored in the tree itself, we need to
   // traverse the subtree to identify those pointers. We have to be careful
@@ -291,13 +284,13 @@ void GenericTree<T>::deleteSubtree(TreeNode* targetRoot) {
   // themselves, based on the order in which they are called and return.
   // That is a very elegant way to write this in some languages, and this
   // course's lectures on binary search trees show how you can do that.
-  
+
   // However, recursion in C++ can also cause problems if too many layers
   // of recursion happen in succession before returning, because of the
   // finite amount of stack memory allocated for each C++ program. There
   // are special design considerations to think about when you want to
   // ensure that recursion will be optimized by the compiler.
-  
+
   // Here is a way to do it iteratively, using loops instead of recursion.
   // We need to use an explicit data structure (such as a stack) to
   // keep track of nodes that still need to be traversed, since we won't
@@ -331,18 +324,17 @@ void GenericTree<T>::deleteSubtree(TreeNode* targetRoot) {
   // list it as a child. (Otherwise, targetRoot is actually the root of the
   // whole tree, so it has no parent, and we can skip this section.)
   if (targetRoot->parentPtr) {
-
     // A flag for error checking: We need to find the target node
     // listed as a child of its parent. We will keep track as we search.
     bool targetWasFound = false;
-    
+
     // Loop through the parent's listed children using a reference variable
     // in a range-based for loop. (Yes, currentChildPtr is a pointer, but
     // we're accesssing each pointer directly by reference this way, so we
-    // can change the original pointers stored in targetRoot->parentPtr->childrenPtrs
-    // that we are iterating over, instead of acting on temporary copies.)
-    // If the child is found under its parent as expected, overwrite it
-    // in-place with nullptr.
+    // can change the original pointers stored in
+    // targetRoot->parentPtr->childrenPtrs that we are iterating over, instead
+    // of acting on temporary copies.) If the child is found under its parent as
+    // expected, overwrite it in-place with nullptr.
     for (auto& currentChildPtr : targetRoot->parentPtr->childrenPtrs) {
       if (currentChildPtr == targetRoot) {
         // We found where the parent node is pointing to the target
@@ -360,7 +352,8 @@ void GenericTree<T>::deleteSubtree(TreeNode* targetRoot) {
     if (!targetWasFound) {
       // If this flag is still false, we have some kind of bug.
       // The target should have been listed as a child of its parent.
-      constexpr char ERROR_MESSAGE[] = "Target node to delete was not listed as a child of its parent";
+      constexpr char ERROR_MESSAGE[] =
+          "Target node to delete was not listed as a child of its parent";
       std::cerr << ERROR_MESSAGE << std::endl;
       throw std::runtime_error(ERROR_MESSAGE);
     }
@@ -413,11 +406,11 @@ void GenericTree<T>::deleteSubtree(TreeNode* targetRoot) {
 
   // Keep looping as long as there are nodes left to explore and delete.
   while (!nodesToExplore.empty()) {
-
     // Get a copy of the top pointer on the explore stack.
     TreeNode* curNode = nodesToExplore.top();
 
-    // Now that we've retrieved the top pointer, we can pop it from the explore stack.
+    // Now that we've retrieved the top pointer, we can pop it from the explore
+    // stack.
     nodesToExplore.pop();
 
     if (showDebugMessages) {
@@ -425,8 +418,7 @@ void GenericTree<T>::deleteSubtree(TreeNode* targetRoot) {
       if (curNode) {
         // if curNode isn't null, we can show what it contains
         std::cerr << curNode->data << std::endl;
-      }
-      else {
+      } else {
         std::cerr << "[null]" << std::endl;
       }
     }
@@ -435,10 +427,11 @@ void GenericTree<T>::deleteSubtree(TreeNode* targetRoot) {
     if (!curNode) {
       // The "continue" statement jumps to the top of the next iteration
       // of the while loop.
-      continue; 
+      continue;
     }
 
-    // Record that we need to delete this node later, by pushing it onto the delete stack.
+    // Record that we need to delete this node later, by pushing it onto the
+    // delete stack.
     nodesToDelete.push(curNode);
 
     // Loop through the current node's children pointers from first to last,
@@ -448,12 +441,11 @@ void GenericTree<T>::deleteSubtree(TreeNode* targetRoot) {
       nodesToExplore.push(childPtr);
     }
 
-  } // End of explore loop.
+  }  // End of explore loop.
 
   // We're done exploring all the nodes in the tree now, so now we need
   // to delete the nodes one at a time from the delete stack.
   while (!nodesToDelete.empty()) {
-    
     // Get a copy of the top pointer on the delete stack.
     TreeNode* curNode = nodesToDelete.top();
 
@@ -465,8 +457,7 @@ void GenericTree<T>::deleteSubtree(TreeNode* targetRoot) {
       if (curNode) {
         // if curNode isn't null, we can show what it contains
         std::cerr << curNode->data << std::endl;
-      }
-      else {
+      } else {
         std::cerr << "[null]" << std::endl;
       }
     }
@@ -499,7 +490,6 @@ void GenericTree<T>::deleteSubtree(TreeNode* targetRoot) {
 
 template <typename T>
 void GenericTree<T>::compress() {
-
   // We'll use an iterative approach to traversing the tree here.
   // In this function, we don't ever want to push null pointers onto the
   // exploration queue. Some exploration techniques do push null pointers, as
@@ -519,15 +509,17 @@ void GenericTree<T>::compress() {
 
   // Loop while there are still nodes to explore
   while (!nodesToExplore.empty()) {
-
-    // Make a copy of the front pointer on the queue, then pop it to decrease the queue
+    // Make a copy of the front pointer on the queue, then pop it to decrease
+    // the queue
     TreeNode* frontNode = nodesToExplore.front();
     nodesToExplore.pop();
 
     if (!frontNode) {
       // The front node pointer should not be null, because we're designing this
-      // function so that no null pointers should ever get pushed onto the exploration queue.
-      throw std::runtime_error("Error: Compression exploration queued a null pointer");
+      // function so that no null pointers should ever get pushed onto the
+      // exploration queue.
+      throw std::runtime_error(
+          "Error: Compression exploration queued a null pointer");
     }
 
     // If the node exists, it may have children pointers. Let's make
@@ -553,12 +545,10 @@ void GenericTree<T>::compress() {
     // with our node.
     frontNode->childrenPtrs.swap(compressedChildrenPtrs);
   }
-
 }
 
 template <typename T>
 std::ostream& GenericTree<T>::Print(std::ostream& os) const {
-
   // For the text terminal, we'd like to print trees vertically in such a way
   // that the leftmost (or first) children are displayed first vertically.
   // The rightmost children will be displayed lowest and last.
@@ -600,13 +590,13 @@ std::ostream& GenericTree<T>::Print(std::ostream& os) const {
   // A vector of bool will track the margin graphics for each node;
   // Each entry set to true means to display a vertical branch symbol;
   // each entry set to false means to display a blank space.
-  std::stack< std::vector<bool> > curMarginStack;
+  std::stack<std::vector<bool> > curMarginStack;
   // Begin with no margin for depth 0.
-  curMarginStack.push( std::vector<bool>() );
+  curMarginStack.push(std::vector<bool>());
   // Each node's margin graphics will be based on the trailing lines that
   // are still running parallel in the margin.
-  std::stack< std::vector<bool> > trailingMarginStack;
-  trailingMarginStack.push( std::vector<bool>() );
+  std::stack<std::vector<bool> > trailingMarginStack;
+  trailingMarginStack.push(std::vector<bool>());
 
   // Now, we want to "explore" each node by adding its children to the top
   // of the explore stack. Perhaps we'd like to push the rightmost children
@@ -614,7 +604,7 @@ std::ostream& GenericTree<T>::Print(std::ostream& os) const {
   // the leftmost children first, exploring the left-most branch first.
   // To push the children onto the stack from right to left, we'll need to
   // iterate over the node's immediate children in reverse order. How?
-  
+
   // Here, we're using a std::vector for each node's collection of childrenPtrs.
   // The std::vector class allows index-based lookups like an array using [],
   // which is potentially unsafe if the index given is out of bounds,
@@ -648,11 +638,11 @@ std::ostream& GenericTree<T>::Print(std::ostream& os) const {
   // iterators.
 
   while (!nodesToExplore.empty()) {
-
     // Get a copy of the top pointer on the explore stack.
     const TreeNode* curNode = nodesToExplore.top();
 
-    // Now that we've retrieved the top pointer, we can pop it from the explore stack.
+    // Now that we've retrieved the top pointer, we can pop it from the explore
+    // stack.
     nodesToExplore.pop();
 
     // Pop the current depth for the node being explored.
@@ -672,12 +662,10 @@ std::ostream& GenericTree<T>::Print(std::ostream& os) const {
       if (curNode) {
         // if curNode isn't null, we can show what it contains
         std::cerr << curNode->data << std::endl;
-      }
-      else {
+      } else {
         std::cerr << "[null]" << std::endl;
       }
-    }
-    else {
+    } else {
       // Print the tree as vertical character art.
       // Display two rows for each node: The first row adds vertical space
       // for clarity (while continuing the trailing stems), and the second
@@ -685,10 +673,11 @@ std::ostream& GenericTree<T>::Print(std::ostream& os) const {
 
       constexpr int LAST_ROW = 2;
 
-      for (int row = 1; row<=LAST_ROW; row++) {
-        // Iterate forward through the margin display flags to fill in the margin.
-        for (auto stemIt = curMargin.begin(); stemIt != curMargin.end(); stemIt++) {
-
+      for (int row = 1; row <= LAST_ROW; row++) {
+        // Iterate forward through the margin display flags to fill in the
+        // margin.
+        for (auto stemIt = curMargin.begin(); stemIt != curMargin.end();
+             stemIt++) {
           bool showStem = *stemIt;
           std::string stemSymbol = "|";
           if (!showStem) {
@@ -701,20 +690,17 @@ std::ostream& GenericTree<T>::Print(std::ostream& os) const {
           }
 
           if (isLastCol) {
-            if (LAST_ROW==row) {
+            if (LAST_ROW == row) {
               // The stem before the data item should always be "|_ " in effect:
               os << stemSymbol << "_ ";
-            }
-            else if (showStem) {
+            } else if (showStem) {
               // Display a stem and a newline
               os << stemSymbol << std::endl;
-            }
-            else {
+            } else {
               // Don't bother displaying trailing spaces before the newline
               os << std::endl;
             }
-          }
-          else {
+          } else {
             // Display a stem (or a blank) and some padding spaces
             os << stemSymbol << "  ";
           }
@@ -729,56 +715,51 @@ std::ostream& GenericTree<T>::Print(std::ostream& os) const {
       // is displayed alone on the first line correctly.)
       if (curNode) {
         os << curNode->data << std::endl;
+      } else {
+        os << "[null]" << std::endl;
+        ;
       }
-      else {
-        os << "[null]" << std::endl;;
-      }
-
     }
 
     // If this node is non-null and has any children...
     if (curNode && curNode->childrenPtrs.size() > 0) {
-
       // Now, we iterate over childrenPtrs in reverse order. The iterator "it"
       // will begin at the "reverse beginning", and we'll iterate it as long as
       // it's not the "reverse ending". When we do it++, we do iterate in the
       // reverse direction correctly.
-      for (auto it = curNode->childrenPtrs.rbegin(); it != curNode->childrenPtrs.rend(); it++) {
-        
+      for (auto it = curNode->childrenPtrs.rbegin();
+           it != curNode->childrenPtrs.rend(); it++) {
         // The iterator points to one child pointer. So here, the iterator is
         // like a pointer-to-pointer. By dereferencing the iterator, we get a
-        // child pointer value. We can save a temporary copy of that child pointer
-        // to a local variable.
+        // child pointer value. We can save a temporary copy of that child
+        // pointer to a local variable.
         const TreeNode* childPtr = *it;
 
         // Now, push the child pointer onto the stack of children to explore.
         nodesToExplore.push(childPtr);
-        
+
         // Record the depth that corresponds to the child node.
-        depthStack.push(curDepth+1);
-        
+        depthStack.push(curDepth + 1);
+
         // Prepare a working copy of the margin for the node we're pushing.
         auto nextMargin = trailingMargin;
         // All nodes get an extra stem glyph next to their printout.
         nextMargin.push_back(true);
         curMarginStack.push(nextMargin);
-        
+
         // But for the trailing margin, we need to leave the rightmost child
         // with a blank trailing in the margin, because it's displayed lowest.
         auto nextTrailingMargin = trailingMargin;
         if (curNode->childrenPtrs.rbegin() == it) {
           // This is the rightmost child. Leave a blank trailing.
           nextTrailingMargin.push_back(false);
-        }
-        else {
+        } else {
           // Other children leave a vertical stem symbol trailing in the margin.
           nextTrailingMargin.push_back(true);
         }
         trailingMarginStack.push(nextTrailingMargin);
-
       }
     }
-
   }
 
   return os;

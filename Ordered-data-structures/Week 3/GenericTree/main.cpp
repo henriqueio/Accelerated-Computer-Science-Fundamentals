@@ -3,7 +3,7 @@
  * University of Illinois CS 400, MOOC 2, Week 3: Generic Tree
  *
  * @author Eric Huber
-**/
+ **/
 
 #include <iostream>
 #include <string>
@@ -22,7 +22,6 @@ void exampleTree2();
 // Main function: Shows some example output of the provided functions
 // and runs a few tests on the ones you implement in the exercises.
 int main() {
-
   exampleTree1();
 
   exampleTree2();
@@ -35,10 +34,9 @@ int main() {
 }
 
 void exampleTree1() {
-
   std::cout << std::endl;
   std::cout << "------------------------------" << std::endl;
-  std::cout << "EXAMPLE TREE 1" << std::endl  << std::endl;
+  std::cout << "EXAMPLE TREE 1" << std::endl << std::endl;
 
   // Create a new tree with the root node containing "A".
   GenericTree<std::string> tree("A");
@@ -46,14 +44,14 @@ void exampleTree1() {
   // Get a pointer to the root node. Automatically detect the
   // type as a pointer to a node.
   auto nodeA = tree.getRootPtr();
-  
+
   // We could write out the entire templated type we expect to be returned,
   // but templated types and inner class types can have very long type
   // names, like this:
-  //   GenericTree<std::string>::GenericTreeNode* nodeA = tree.getRootPtr();  
+  //   GenericTree<std::string>::GenericTreeNode* nodeA = tree.getRootPtr();
   // It's much easier to use "auto" in these situations, which will
   // automatically detect the type returned.
-  
+
   // Remember that nodeA here is a pointer to a node. Also, addChild returns
   // a pointer to a node. The child nodes created have their pointers stored
   // in the tree itself, but we save copies of the pointers as variables here
@@ -66,29 +64,32 @@ void exampleTree1() {
   nodeE->addChild("F");
   nodeE->addChild("G");
 
-  std::cout << "Here's a small example tree. (The leftmost branches are displayed\n"
-    << " highest in the vertical display format for the terminal.)" << std::endl;
+  std::cout
+      << "Here's a small example tree. (The leftmost branches are displayed\n"
+      << " highest in the vertical display format for the terminal.)"
+      << std::endl;
   std::cout << tree << std::endl;
 
   std::cout << "Debug display of the depth information per node:" << std::endl;
   tree.showDebugMessages = true;
   std::cout << tree << std::endl;
 
-  std::cout << "Now, when the tree goes out of scope and is destroyed, you can see the order\n"
-    << " in which the nodes are explored and destroyed for cleanup:" << std::endl;
+  std::cout << "Now, when the tree goes out of scope and is destroyed, you can "
+               "see the order\n"
+            << " in which the nodes are explored and destroyed for cleanup:"
+            << std::endl;
 
   return;
 }
 
 void exampleTree2() {
-
   std::cout << std::endl;
   std::cout << "------------------------------" << std::endl;
-  std::cout << "EXAMPLE TREE 2" << std::endl  << std::endl;
+  std::cout << "EXAMPLE TREE 2" << std::endl << std::endl;
   std::cout << "Here's a larger tree:" << std::endl << std::endl;
 
   GenericTree<std::string> tree("X");
-  
+
   // It's possible to clear the entire tree.
   // As a demonstration, let's try clearing the tree and creating a
   // new root with "A" instead.
@@ -110,7 +111,8 @@ void exampleTree2() {
 
   std::cout << tree << std::endl;
 
-  std::cout << "Let's delete the subtrees rooted at D and at L:" << std::endl << std::endl;
+  std::cout << "Let's delete the subtrees rooted at D and at L:" << std::endl
+            << std::endl;
 
   // After deleting the D subtree, the existing D and E pointers
   // won't be safe to dereference anymore. Reset them to nullptr.
@@ -124,19 +126,26 @@ void exampleTree2() {
 
   std::cout << tree << std::endl;
 
-  std::cout << "Let's try some helper functions to count how many null children are left" << std::endl
-    << " over in the tree:" << std::endl << std::endl;
+  std::cout << "Let's try some helper functions to count how many null "
+               "children are left"
+            << std::endl
+            << " over in the tree:" << std::endl
+            << std::endl;
 
   int nullChildrenCount = countNullChildrenRecursive(tree.getRootPtr());
-  std::cout << "Null children counted recursively: " << nullChildrenCount << std::endl;
+  std::cout << "Null children counted recursively: " << nullChildrenCount
+            << std::endl;
 
   nullChildrenCount = countNullChildrenIterative(tree.getRootPtr());
-  std::cout << "Null children counted iteratively: " << nullChildrenCount << std::endl;
+  std::cout << "Null children counted iteratively: " << nullChildrenCount
+            << std::endl;
 
   std::cout << std::endl;
-  std::cout << "Now let's compress the tree to remove the null children pointers:"
-    << std::endl << std::endl;
-  
+  std::cout
+      << "Now let's compress the tree to remove the null children pointers:"
+      << std::endl
+      << std::endl;
+
   tree.compress();
   std::cout << "After compressing:" << std::endl;
   std::cout << tree << std::endl;
@@ -145,4 +154,3 @@ void exampleTree2() {
 
   return;
 }
-
