@@ -5,7 +5,7 @@
  *
  * @author Eric Huber
  *
-**/
+ **/
 
 // --------------------------------------------------------------
 // This file has some common includes and helper functions
@@ -19,16 +19,16 @@
 // etc.). This avoids slowing down the compilation of other object files
 // in your project, as well as polluting the namespaces of those files with
 // stuff that isn't needed or used in the header file explicitly.
-#include <stdexcept> // for std::runtime_error
-#include <iostream> // for std::cerr, std::cout
-#include <fstream> // for std::fstream
-#include <string> // for std::string
-#include <vector> // for std::vector
-#include <cctype> // std::tolower
-#include <algorithm> // for std::sorts
-#include <regex> // for std::regex
-
 #include "UnorderedMapCommon.h"
+
+#include <algorithm>  // for std::sorts
+#include <cctype>     // std::tolower
+#include <fstream>    // for std::fstream
+#include <iostream>   // for std::cerr, std::cout
+#include <regex>      // for std::regex
+#include <stdexcept>  // for std::runtime_error
+#include <string>     // for std::string
+#include <vector>     // for std::vector
 
 // Load the whole book "Through the Looking-Glass" as vector of strings.
 // (This is handled for you.)
@@ -37,19 +37,18 @@
 // are included in words where they are found, so strings like "alice" and
 // "alice's" are counted separately as unique words.
 StringVec loadBookStrings(unsigned int min_word_length) {
-
   static const std::string filename = "through_the_looking_glass.txt";
   static const std::string start_text = "CHAPTER I";
   static const std::string end_text = "End of the Project Gutenberg EBook";
   constexpr bool DEBUGGING = false;
   constexpr int DEBUGGING_MAX_WORDS = 30;
 
-  // We'll just handle the input file as plain text. (It is actually encoded as UTF-8,
-  // which is partially compatible as "plain text," but some special characters
-  // or punctuation in the file cannot be represented as an ordinary "char" in C++.
-  // In practice, parsing text robustly can be much more complicated than this,
-  // but it's a topic for another course.)
-  
+  // We'll just handle the input file as plain text. (It is actually encoded as
+  // UTF-8, which is partially compatible as "plain text," but some special
+  // characters or punctuation in the file cannot be represented as an ordinary
+  // "char" in C++. In practice, parsing text robustly can be much more
+  // complicated than this, but it's a topic for another course.)
+
   // Open the input file for reading with an ifstream, input file stream object.
   // If it can't be opened, throw an exception.
   std::ifstream instream(filename);
@@ -72,10 +71,10 @@ StringVec loadBookStrings(unsigned int min_word_length) {
       // the file turned out to be blank, if we named the wrong file locally.)
 
       // Search within the line of text for the start_text string.
-      // If not found at all, then this returns the special value std::string::npos.
-      // So if the find() call does NOT equal std::string::npos, then we DID
-      // find start_text within this line, and so we break out of the loop,
-      // because we're done fast-forwarding.
+      // If not found at all, then this returns the special value
+      // std::string::npos. So if the find() call does NOT equal
+      // std::string::npos, then we DID find start_text within this line, and so
+      // we break out of the loop, because we're done fast-forwarding.
       if (line.find(start_text) != std::string::npos) {
         break;
       }
@@ -86,7 +85,6 @@ StringVec loadBookStrings(unsigned int min_word_length) {
   std::string line;
   bool stillReading = true;
   while (stillReading && std::getline(instream, line)) {
-
     // If this line contains the ending of the book text,
     // then stop so we don't read the legal disclaimers.
     if (line.find(end_text) != std::string::npos) {
@@ -126,36 +124,31 @@ StringVec loadBookStrings(unsigned int min_word_length) {
             // Then the first letter has already been recorded, and now
             // we'll put down the apostrophe, and then the following letter.
             trimmed_word += "'";
-          }
-          else if (prevChar == '-') {
+          } else if (prevChar == '-') {
             // Likewise, we'll allow [letter][dash][letter] to include
             // the dash in the word.
             trimmed_word += "-";
           }
           trimmed_word += thisChar;
           prevChar = thisChar;
-        }
-        else if ('\'' == c) {
+        } else if ('\'' == c) {
           // Only note an apostrophe as a previous character if it follows
           // a letter. Don't add it to the recorded word yet.
           if (std::isalpha(prevChar)) {
             prevChar = '\'';
-          }
-          else {
+          } else {
             prevChar = ' ';
           }
-        }
-        else if ('-' == c) {
+        } else if ('-' == c) {
           // Only note a dash as a previous character if it follows
           // a letter. Don't add it to the recorded word yet.
           if (std::isalpha(prevChar)) {
             prevChar = '-';
-          }
-          else {
+          } else {
             prevChar = ' ';
           }
-        }
-        else break;
+        } else
+          break;
       }
 
       // Keep the part of the line that hasn't been consumed yet.
@@ -213,27 +206,30 @@ StringIntPairVec sortWordCounts(const StringIntMap& wordcount_map) {
 
 // Makes a list (actually, std::vector) of the least common words found in
 // the book. As input, it takes the result of sortWordCounts.
-StringIntPairVec getBottomWordCounts(const StringIntPairVec& sorted_wordcounts, unsigned int max_words) {
+StringIntPairVec getBottomWordCounts(const StringIntPairVec& sorted_wordcounts,
+                                     unsigned int max_words) {
   StringIntPairVec bottom_wordcounts;
   for (const auto& wordcount_item : sorted_wordcounts) {
     if (bottom_wordcounts.size() < max_words) {
       bottom_wordcounts.push_back(wordcount_item);
-    }
-    else break;
+    } else
+      break;
   }
   return bottom_wordcounts;
 }
 
 // Makes a list (actually, std::vector) of the most common words found in
 // the book. As input, it takes the result of sortWordCounts.
-StringIntPairVec getTopWordCounts(const StringIntPairVec& sorted_wordcounts, unsigned int max_words) {
+StringIntPairVec getTopWordCounts(const StringIntPairVec& sorted_wordcounts,
+                                  unsigned int max_words) {
   StringIntPairVec top_wordcounts;
-  for (auto rit = sorted_wordcounts.rbegin(); rit != sorted_wordcounts.rend(); rit++) {
+  for (auto rit = sorted_wordcounts.rbegin(); rit != sorted_wordcounts.rend();
+       rit++) {
     if (top_wordcounts.size() < max_words) {
       const auto& wordcount_item = *rit;
       top_wordcounts.push_back(wordcount_item);
-    }
-    else break;
+    } else
+      break;
   }
   return top_wordcounts;
 }
@@ -241,9 +237,11 @@ StringIntPairVec getTopWordCounts(const StringIntPairVec& sorted_wordcounts, uns
 // This uses brute-force recursion to calculate the longest palindrome substring
 // within str, based on the left and right index limits given. It also takes
 // clock information to prevent running too long, in some cases.
-int longestPalindromeLength(const std::string& str, int leftLimit, int rightLimit, timeUnit startTime, double maxDuration) {
-  // Base case: Return 0 as the longest palindrome length when the indices cross.
-  // This could happen during our recursive steps defined below.
+int longestPalindromeLength(const std::string& str, int leftLimit,
+                            int rightLimit, timeUnit startTime,
+                            double maxDuration) {
+  // Base case: Return 0 as the longest palindrome length when the indices
+  // cross. This could happen during our recursive steps defined below.
   if (leftLimit > rightLimit) {
     return 0;
   }
@@ -259,16 +257,18 @@ int longestPalindromeLength(const std::string& str, int leftLimit, int rightLimi
     // above already.
     throw std::runtime_error("rightLimit negative, but it's not the base case");
   }
-  
+
   // Apart from that, in the following code, the std::string::at() function
   // will throw an exception if an index is out of bounds.
 
   if (false) {
     // Debugging messages
-    int range = rightLimit-leftLimit+1;
+    int range = rightLimit - leftLimit + 1;
     if (range < 0) range = 0;
-    std::cout << "Considering substring: " << str.substr(leftLimit, range) << std::endl;
-    std::cout << " because l/r limits are: " << leftLimit << " " << rightLimit << std::endl;
+    std::cout << "Considering substring: " << str.substr(leftLimit, range)
+              << std::endl;
+    std::cout << " because l/r limits are: " << leftLimit << " " << rightLimit
+              << std::endl;
   }
 
   // Some examples may take an absurdly long time to calculate with brute force.
@@ -288,30 +288,32 @@ int longestPalindromeLength(const std::string& str, int leftLimit, int rightLimi
   // If the first and last character match, then...
   if (str.at(leftLimit) == str.at(rightLimit)) {
     // move left limit to the right
-    int newLeft = leftLimit+1;
+    int newLeft = leftLimit + 1;
     // move right limit to the left
-    int newRight = rightLimit-1;
+    int newRight = rightLimit - 1;
 
     // Solve the middle subproblem.
-    int middleSubproblemResult = longestPalindromeLength(str, newLeft, newRight, startTime, maxDuration);
+    int middleSubproblemResult =
+        longestPalindromeLength(str, newLeft, newRight, startTime, maxDuration);
 
-    // (Base case note: Suppose that str had length 2, so after moving the indices,
+    // (Base case note: Suppose that str had length 2, so after moving the
+    // indices,
     //  now newLeft > newRight. Because we handled the crossing case already,
     //  in that situation, middleSubproblemResult correctly gets value 0.)
 
     // For reference, let's calculate the longest length possible in the
     // middle substring range.
-    int middleMaxLength = newRight-newLeft+1;
+    int middleMaxLength = newRight - newLeft + 1;
     // In the base case situation when the indices cross,
     // we force this value to be 0 instead of negative.
     if (middleMaxLength < 0) middleMaxLength = 0;
-    
+
     // If the middle subproblem result equals the entire length
     // of the middle substring, then the middle substring is a palindrome.
     // So, since the first and last outer characters match each other,
     // the entire string between leftLimit and rightLimit is a palindrome.
     if (middleSubproblemResult == middleMaxLength) {
-      return 2+middleSubproblemResult;
+      return 2 + middleSubproblemResult;
     }
 
     // Otherwise, don't return from the function yet!
@@ -324,11 +326,13 @@ int longestPalindromeLength(const std::string& str, int leftLimit, int rightLimi
   // and right limit, separately, and compare the results.
 
   // Move the right limit to the left.
-  int leftSubproblemResult = longestPalindromeLength(str, leftLimit, rightLimit-1, startTime, maxDuration);
+  int leftSubproblemResult = longestPalindromeLength(
+      str, leftLimit, rightLimit - 1, startTime, maxDuration);
   // Move the left limit to the right.
-  int rightSubproblemResult = longestPalindromeLength(str, leftLimit+1, rightLimit, startTime, maxDuration);
+  int rightSubproblemResult = longestPalindromeLength(
+      str, leftLimit + 1, rightLimit, startTime, maxDuration);
   // Return whichever result was greater.
-  return std::max(leftSubproblemResult,rightSubproblemResult);
+  return std::max(leftSubproblemResult, rightSubproblemResult);
 }
 
 // -------------------------------------------------------------------------
@@ -338,14 +342,14 @@ int longestPalindromeLength(const std::string& str, int leftLimit, int rightLimi
 // reconstructPalindrome returns a copy of the longest palindrome within str,
 // based on the information provided by the memoization table that has been
 // previously calculated by memoizedLongestPalindromeLength.
-std::string reconstructPalindrome(const LengthMemo& memo, const std::string& str) {
-
+std::string reconstructPalindrome(const LengthMemo& memo,
+                                  const std::string& str) {
   // If the input string is empty, just return an empty string.
   if (!str.length()) return "";
 
   // Begin with the limits on the first and last characters.
   int left = 0;
-  int right = str.length()-1;
+  int right = str.length() - 1;
 
   // Make a working copy of the read-only memo.
   // We can then edit the copy destructively as we work, if needed.
@@ -361,7 +365,7 @@ std::string reconstructPalindrome(const LengthMemo& memo, const std::string& str
   // We know that the best (longest) palindrome length is recorded in the
   // memoization table entry that represents the entire string from beginning
   // to end. So we begin with that best-ever value for comparison below.
-  const int BEST_LEN = edit_memo[std::make_pair(left,right)];
+  const int BEST_LEN = edit_memo[std::make_pair(left, right)];
 
   bool loop_again = true;
   while (loop_again) {
@@ -376,10 +380,10 @@ std::string reconstructPalindrome(const LengthMemo& memo, const std::string& str
     int test_left, test_right;
 
     // try moving left limit
-    test_left = left+1;
+    test_left = left + 1;
     test_right = right;
     if (test_left <= test_right) {
-      int test_len = edit_memo[std::make_pair(test_left,test_right)];
+      int test_len = edit_memo[std::make_pair(test_left, test_right)];
       if (test_len == BEST_LEN) {
         left = test_left;
         loop_again = true;
@@ -388,9 +392,9 @@ std::string reconstructPalindrome(const LengthMemo& memo, const std::string& str
 
     // try moving right limit
     test_left = left;
-    test_right = right-1;
+    test_right = right - 1;
     if (test_left <= test_right) {
-      int test_len = edit_memo[std::make_pair(test_left,test_right)];
+      int test_len = edit_memo[std::make_pair(test_left, test_right)];
       if (test_len == BEST_LEN) {
         right = test_right;
         loop_again = true;
@@ -403,10 +407,8 @@ std::string reconstructPalindrome(const LengthMemo& memo, const std::string& str
   // the actual palindrome substring. (But only if the indices are still
   // a valid substring range where left <= right.)
   if (left <= right) {
-    return str.substr(left, right-left+1);
-  }
-  else {
+    return str.substr(left, right - left + 1);
+  } else {
     return "";
   }
 }
-

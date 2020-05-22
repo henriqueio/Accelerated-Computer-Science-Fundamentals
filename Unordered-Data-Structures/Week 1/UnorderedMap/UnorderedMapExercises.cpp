@@ -7,7 +7,7 @@
  *
  * @author Eric Huber - University of Illinois staff
  *
-**/
+ **/
 
 // Before beginning these exercises, you should read the instructions PDF,
 // and look through the other code files in this directory for examples and
@@ -16,8 +16,6 @@
 #include <iostream>
 
 #include "UnorderedMapCommon.h"
-
-
 
 // =========================================================================
 // EXERCISE 1: makeWordCounts
@@ -56,11 +54,12 @@ StringIntMap makeWordCounts(const StringVec& words) {
   // =================================================
   // EXERCISE 1 WORKSPACE: YOUR CODE HERE
   // =================================================
+  for (int i = 0; i < words.size(); ++i) {
+    wordcount_map[words[i]]++;
+  }
 
   return wordcount_map;
 }
-
-
 
 // =========================================================================
 // EXERCISE 2: lookupWithFallback
@@ -95,16 +94,14 @@ StringIntMap makeWordCounts(const StringVec& words) {
 // that you did not edit the original map.
 // =========================================================================
 
-int lookupWithFallback(const StringIntMap& wordcount_map, const std::string& key, int fallbackVal) {
-
+int lookupWithFallback(const StringIntMap& wordcount_map,
+                       const std::string& key, int fallbackVal) {
   // =================================================
   // EXERCISE 2 WORKSPACE: YOUR CODE HERE
   // =================================================
 
-  return -1337; // Change this!
+  return -1337;  // Change this!
 }
-
-
 
 // =========================================================================
 // EXERCISE 3: Memoizing a Function
@@ -165,8 +162,9 @@ int lookupWithFallback(const StringIntMap& wordcount_map, const std::string& key
 // for finding the maximum palindrome substring length.
 // The startTime and maxDuration parameters are used by the grader to make
 // sure your function doesn't accidentally run very slow.
-int memoizedLongestPalindromeLength(LengthMemo& memo, const std::string& str, int leftLimit, int rightLimit, timeUnit startTime, double maxDuration) {
-
+int memoizedLongestPalindromeLength(LengthMemo& memo, const std::string& str,
+                                    int leftLimit, int rightLimit,
+                                    timeUnit startTime, double maxDuration) {
   // Check validity of indices for debugging. The indices shouldn't be negative
   // unless it's the special base case where they cross during recursion.
   // We handle that case further below.
@@ -182,10 +180,12 @@ int memoizedLongestPalindromeLength(LengthMemo& memo, const std::string& str, in
 
   if (false) {
     // Debugging spam messages
-    int range = rightLimit-leftLimit+1;
+    int range = rightLimit - leftLimit + 1;
     if (range < 0) range = 0;
-    std::cout << "Considering substring: " << str.substr(leftLimit, range) << std::endl;
-    std::cout << " because l/r limits are: " << leftLimit << " " << rightLimit << std::endl;
+    std::cout << "Considering substring: " << str.substr(leftLimit, range)
+              << std::endl;
+    std::cout << " because l/r limits are: " << leftLimit << " " << rightLimit
+              << std::endl;
   }
 
   // It's possible that a student could make a mistake in this function that
@@ -200,12 +200,12 @@ int memoizedLongestPalindromeLength(LengthMemo& memo, const std::string& str, in
   // IntPair is our type alias for std::pair<int, int>
   const IntPair pairKey = std::make_pair(leftLimit, rightLimit);
 
-  // The count() function of unordered_map tells us if the key is already in the map.
-  // It returns 1 if found and otherwise 0. (These values convert to true and false.)
-  // (It's important to not just use memo[pairKey] in this check, because that will
+  // The count() function of unordered_map tells us if the key is already in the
+  // map. It returns 1 if found and otherwise 0. (These values convert to true
+  // and false.) (It's important to not just use memo[pairKey] in this check,
+  // because that will
   //  create the entry with a default value if it doesn't already exist!)
   if (memo.count(pairKey)) {
-
     // ====================================================================
     // EXERCISE 3 - PART A - YOUR CODE HERE!
 
@@ -214,17 +214,18 @@ int memoizedLongestPalindromeLength(LengthMemo& memo, const std::string& str, in
     // new in this case. So, we also won't store anything new in the table in
     // this case, only return what's already stored at this key in the map.
 
-    return -1337; // Hint: You need to change this!
+    return -1337;  // Hint: You need to change this!
     // ====================================================================
-
   }
 
   // If the memoization table didn't have an entry for this key yet,
   // then we're solving this subproblem for the first time.
-  // Below, we'll record our result to make sure we don't have to solve it again.
+  // Below, we'll record our result to make sure we don't have to solve it
+  // again.
 
-  // Base case: Return 0 as the longest palindrome length when the indices cross.
-  // This case could be triggered during our recursive steps defined below.
+  // Base case: Return 0 as the longest palindrome length when the indices
+  // cross. This case could be triggered during our recursive steps defined
+  // below.
   if (leftLimit > rightLimit) {
     // Since this case already returns in constant time (that is, O(1) time)
     // without recursing further, we don't really need to memoize it,
@@ -262,20 +263,22 @@ int memoizedLongestPalindromeLength(LengthMemo& memo, const std::string& str, in
   // If the first and last character match, then...
   if (str.at(leftLimit) == str.at(rightLimit)) {
     // move left limit to the right
-    int newLeft = leftLimit+1;
+    int newLeft = leftLimit + 1;
     // move right limit to the left
-    int newRight = rightLimit-1;
+    int newRight = rightLimit - 1;
 
     // Solve the middle subproblem.
-    int middleSubproblemResult = memoizedLongestPalindromeLength(memo, str, newLeft, newRight, startTime, maxDuration);
+    int middleSubproblemResult = memoizedLongestPalindromeLength(
+        memo, str, newLeft, newRight, startTime, maxDuration);
 
-    // (Base case note: Suppose that str had length 2, so after moving the indices,
+    // (Base case note: Suppose that str had length 2, so after moving the
+    // indices,
     //  now newLeft > newRight. Because we handled the crossing case already,
     //  in that situation, middleSubproblemResult correctly gets value 0.)
 
     // For reference, let's calculate the longest length possible in the
     // middle substring range.
-    int middleMaxLength = newRight-newLeft+1;
+    int middleMaxLength = newRight - newLeft + 1;
     // In the base case situation when the indices cross,
     // we force this value to be 0 instead of negative.
     if (middleMaxLength < 0) middleMaxLength = 0;
@@ -285,7 +288,7 @@ int memoizedLongestPalindromeLength(LengthMemo& memo, const std::string& str, in
     // So, since the first and last outer characters match each other,
     // the entire string between leftLimit and rightLimit is a palindrome.
     if (middleSubproblemResult == middleMaxLength) {
-      int result = 2+middleSubproblemResult;
+      int result = 2 + middleSubproblemResult;
 
       // This result, which we should memoize, is for the range between the
       // original leftLimit and rightLimit. (It's not for the inner range
@@ -311,17 +314,18 @@ int memoizedLongestPalindromeLength(LengthMemo& memo, const std::string& str, in
   // and right limit, separately, and compare the results.
 
   // Move the right limit to the left and recurse.
-  int leftSubproblemResult = memoizedLongestPalindromeLength(memo, str, leftLimit, rightLimit-1, startTime, maxDuration);
+  int leftSubproblemResult = memoizedLongestPalindromeLength(
+      memo, str, leftLimit, rightLimit - 1, startTime, maxDuration);
   // Move the left limit to the right and recurse.
-  int rightSubproblemResult = memoizedLongestPalindromeLength(memo, str, leftLimit+1, rightLimit, startTime, maxDuration);
+  int rightSubproblemResult = memoizedLongestPalindromeLength(
+      memo, str, leftLimit + 1, rightLimit, startTime, maxDuration);
   // Return whichever result was greater.
   // We can also store this result for memoization purposes.
-  int greaterResult = std::max(leftSubproblemResult,rightSubproblemResult);
+  int greaterResult = std::max(leftSubproblemResult, rightSubproblemResult);
 
   // =======================================================================
   // EXERCISE 3 - PART B - YOUR CODE HERE!
   //
-  return -1337; // Hint: You need to change this!
+  return -1337;  // Hint: You need to change this!
   // =======================================================================
 }
-
