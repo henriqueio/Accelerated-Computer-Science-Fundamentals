@@ -54,7 +54,7 @@ StringIntMap makeWordCounts(const StringVec& words) {
   // =================================================
   // EXERCISE 1 WORKSPACE: YOUR CODE HERE
   // =================================================
-  for (int i = 0; i < words.size(); ++i) {
+  for (unsigned int i = 0; i < words.size(); ++i) {
     wordcount_map[words[i]]++;
   }
 
@@ -100,7 +100,9 @@ int lookupWithFallback(const StringIntMap& wordcount_map,
   // EXERCISE 2 WORKSPACE: YOUR CODE HERE
   // =================================================
 
-  return -1337;  // Change this!
+  auto index = wordcount_map.find(key);
+
+  return index != wordcount_map.end() ? wordcount_map.at(key) : fallbackVal;
 }
 
 // =========================================================================
