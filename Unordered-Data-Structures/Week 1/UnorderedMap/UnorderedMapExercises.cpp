@@ -100,8 +100,6 @@ int lookupWithFallback(const StringIntMap& wordcount_map,
   // EXERCISE 2 WORKSPACE: YOUR CODE HERE
   // =================================================
 
-  // auto index = wordcount_map.find(key);
-
   return wordcount_map.find(key) != wordcount_map.end() ? wordcount_map.at(key)
                                                         : fallbackVal;
 }
@@ -217,7 +215,7 @@ int memoizedLongestPalindromeLength(LengthMemo& memo, const std::string& str,
     // new in this case. So, we also won't store anything new in the table in
     // this case, only return what's already stored at this key in the map.
 
-    return -1337;  // Hint: You need to change this!
+    return memo[pairKey];  // Hint: You need to change this!
     // ====================================================================
   }
 
@@ -328,7 +326,7 @@ int memoizedLongestPalindromeLength(LengthMemo& memo, const std::string& str,
 
   // =======================================================================
   // EXERCISE 3 - PART B - YOUR CODE HERE!
-  //
-  return -1337;  // Hint: You need to change this!
+  memo[pairKey] = greaterResult;
+  return greaterResult;
   // =======================================================================
 }
