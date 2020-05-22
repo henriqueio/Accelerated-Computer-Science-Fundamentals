@@ -100,9 +100,10 @@ int lookupWithFallback(const StringIntMap& wordcount_map,
   // EXERCISE 2 WORKSPACE: YOUR CODE HERE
   // =================================================
 
-  auto index = wordcount_map.find(key);
+  // auto index = wordcount_map.find(key);
 
-  return index != wordcount_map.end() ? wordcount_map.at(key) : fallbackVal;
+  return wordcount_map.find(key) != wordcount_map.end() ? wordcount_map.at(key)
+                                                        : fallbackVal;
 }
 
 // =========================================================================
