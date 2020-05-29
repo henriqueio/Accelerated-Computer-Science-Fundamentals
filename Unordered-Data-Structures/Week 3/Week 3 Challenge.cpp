@@ -83,11 +83,18 @@ void DisjointSets::dsunion(int i, int j) {
     // A cycle is detected when dsunion is performed on an edge
     // where both vertices already report the same set leader.
     // TODO: Your work here! Update has_cycle accordingly.
+
+    has_cycle[root_i] = true;
   }
 
   // Also, if either one of the original sets was known to have a cycle
   // already, then the newly joined set still has a cycle.
   // TODO: Your work here!
+
+  if (i_had_cycle || j_had_cycle) {
+    has_cycle[root_i] = true;
+    has_cycle[root_j] = true;
+  }
 }
 
 // TASK 2:
@@ -102,6 +109,10 @@ void DisjointSets::count_comps(int n) {
   //  what information can you get from the leaders now?
 
   // TODO: Your work here!
+
+  for (int i = 0; i < n; i++) {
+    if (leader[i] == -1) num_components++;
+  }
 }
 
 int main() {
