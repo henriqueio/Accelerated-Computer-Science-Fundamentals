@@ -62,7 +62,7 @@ void DisjointSets::bfs(int i, int n, int m, int edges[][2]) {
       int root0 = find(edges[j][0]);
       int root1 = find(edges[j][1]);
 
-      if (***INSERT CONDITION HERE***) {
+      if (rooti != root1 && rooti == root0) {
         // add the [1] vertex of the edge
         // to the frontier, either by
         // setting f to that vertex if it
@@ -81,7 +81,7 @@ void DisjointSets::bfs(int i, int n, int m, int edges[][2]) {
 
         distance[edges[j][1]] = d;
 
-      } else if (***INSERT CONDITION HERE***) {
+      } else if (rooti != root0 && rooti == root1) {
         if (f == -1)
           f = edges[j][0];
         else
