@@ -5,20 +5,20 @@
  *
  * @author Eric Huber
  *
-**/
+ **/
 
 #pragma once
 
+#include <algorithm>  // for std::sort
+#include <array>
+#include <functional>  // for std::hash
 #include <iostream>
+#include <sstream>  // for std::stringstream
 #include <stdexcept>
+#include <string>
 #include <unordered_map>
 #include <unordered_set>
-#include <algorithm> // for std::sort
-#include <array>
 #include <vector>
-#include <string>
-#include <sstream> // for std::stringstream
-#include <functional> // for std::hash
 
 // PuzzleState implements one state of the "8 puzzle", the sliding tile
 // puzzle played with 8 tiles on a 3x3 grid, where a tile is allowed to slide
@@ -28,8 +28,7 @@
 // features that we expect. You can think of std::array as a std::vector that
 // has a fixed size.
 class PuzzleState {
-private:
-
+ private:
   // data:
   // An STL array containing 9 integers, representing the current tiles
   // in order, reading the rows from left to right. For example, if the
@@ -41,8 +40,7 @@ private:
   // for the blank space.
   std::array<int, 9> data;
 
-public:
-
+ public:
   // For better accessibility with screen readers, you can set this to false
   // here to prevent PuzzleState plotting diagrams from being displayed
   // verbosely in the terminal. This class member variable is "static"; the
@@ -57,9 +55,7 @@ public:
   static bool allowPlotting;
 
   // Return a copy of the internal state data.
-  std::array<int, 9> getData() const {
-    return data;
-  }
+  std::array<int, 9> getData() const { return data; }
 
   // Attempt to set the data to match the input parameter; if the input
   // array is clearly an invalid puzzle state, then we throw an exception.
@@ -71,18 +67,19 @@ public:
   }
 
   // Default constructor: Initialize the puzzle in the solved state.
-  PuzzleState() : data({1,2,3,4,5,6,7,8,9}) {}
+  PuzzleState() : data({1, 2, 3, 4, 5, 6, 7, 8, 9}) {}
 
   // Argument constructor: Construct the PuzzleState to match the newData
   // array passed in. However, if the state is invalid, we throw an exception.
   PuzzleState(const std::array<int, 9>& newData) : data(newData) {
     if (!isValid()) {
-      throw std::runtime_error("PuzzleState argument constructor: invalid newData");
+      throw std::runtime_error(
+          "PuzzleState argument constructor: invalid newData");
     }
   }
 
-  // Copy constructor: Initializes this PuzzleState based on another PuzzleState.
-  // We throw an exception if the state is invalid.
+  // Copy constructor: Initializes this PuzzleState based on another
+  // PuzzleState. We throw an exception if the state is invalid.
   PuzzleState(const PuzzleState& other) : data(other.data) {
     if (!isValid()) {
       throw std::runtime_error("PuzzleState copy constructor: invalid other");
@@ -108,8 +105,10 @@ public:
   static bool validateArray(const std::array<int, 9>& data) {
     auto dataCopy = data;
     std::sort(dataCopy.begin(), dataCopy.end());
-    if ( dataCopy != std::array<int,9>({1,2,3,4,5,6,7,8,9}) ) {
-      std::cout << "validateArray warning: data must contain a permutation of numbers 1 through 9" << std::endl;
+    if (dataCopy != std::array<int, 9>({1, 2, 3, 4, 5, 6, 7, 8, 9})) {
+      std::cout << "validateArray warning: data must contain a permutation of "
+                   "numbers 1 through 9"
+                << std::endl;
       return false;
     }
     return true;
@@ -117,11 +116,10 @@ public:
 
   // This is a member function that just calls validateArray on the current
   // class instance's own data array.
-  bool isValid() const {
-    return validateArray(data);
-  }
+  bool isValid() const { return validateArray(data); }
 
-  // Implement comparison with the equality operator for two PuzzleState objects.
+  // Implement comparison with the equality operator for two PuzzleState
+  // objects.
   bool operator==(const PuzzleState& other) const {
     // This relies on the == operator that std::array already implements.
     return (data == other.data);
@@ -162,13 +160,14 @@ public:
     return os;
   }
 
-  // This makes a string representation of the data array, e.g. [1,2,3,4,5,6,7,8,9]
-  // Can be used along with normal std::cout operations for compact printing.
+  // This makes a string representation of the data array, e.g.
+  // [1,2,3,4,5,6,7,8,9] Can be used along with normal std::cout operations for
+  // compact printing.
   std::string stringify() const {
     std::string s = "[";
     // (Recall that the 9 numbers are indexed 0 through 8.)
     // Iterate over the array, but not the last number
-    for (int i=0; i<8; i++) {
+    for (int i = 0; i < 8; i++) {
       s += std::to_string(data.at(i));
       s += ",";
     }
@@ -186,8 +185,8 @@ public:
   // Find the index of the digit with a 9 (representing blank)
   int getBlankIndex() const {
     // find where 9 (the "blank") is and return that index
-    for (int i=0; i<9; i++) {
-      if (9==data[i]) return i;
+    for (int i = 0; i < 9; i++) {
+      if (9 == data[i]) return i;
     }
     // If not found, the puzzle state was already invalid somehow.
     throw std::runtime_error("getBlankIndex: not found; invalid puzzle state");
@@ -195,21 +194,23 @@ public:
 
   // Tries to get the puzzle state from moving the blank "up"
   //  (which slides the above tile "down" to fill the blank).
-  // If this is possible, the outputState parameter is changed and true is returned.
-  // Otherwise, false is returned.
+  // If this is possible, the outputState parameter is changed and true is
+  // returned. Otherwise, false is returned.
   bool getUpState(PuzzleState& outputState) const {
     int blankIdx = getBlankIndex();
-    // If blankIdx<3, the blank is in the top row, so there is no "up" state available.
-    if (blankIdx<3) return false;
-    // Replace the passed PuzzleState with a fresh working copy of the current state.
+    // If blankIdx<3, the blank is in the top row, so there is no "up" state
+    // available.
+    if (blankIdx < 3) return false;
+    // Replace the passed PuzzleState with a fresh working copy of the current
+    // state.
     outputState = *this;
     // We'll swap the blank with the tile above it.
-    int upIdx = blankIdx-3;
+    int upIdx = blankIdx - 3;
     // Remember, the [] operator for std::array returns a reference,
     // so this swap does work directly on the array contents.
-    std::swap(outputState.data[upIdx],outputState.data[blankIdx]);
-    // The outputState has been updated in place, so we don't have to pass it back.
-    // Return true since the state was found.
+    std::swap(outputState.data[upIdx], outputState.data[blankIdx]);
+    // The outputState has been updated in place, so we don't have to pass it
+    // back. Return true since the state was found.
     return true;
   }
 
@@ -217,10 +218,10 @@ public:
   // See the comments on getUpState for more information.
   bool getDownState(PuzzleState& outputState) const {
     int blankIdx = getBlankIndex();
-    if (blankIdx>5) return false;
+    if (blankIdx > 5) return false;
     outputState = *this;
-    int downIdx = blankIdx+3;
-    std::swap(outputState.data[downIdx],outputState.data[blankIdx]);
+    int downIdx = blankIdx + 3;
+    std::swap(outputState.data[downIdx], outputState.data[blankIdx]);
     return true;
   }
 
@@ -230,8 +231,8 @@ public:
     int blankIdx = getBlankIndex();
     if (blankIdx % 3 == 0) return false;
     outputState = *this;
-    int leftIdx = blankIdx-1;
-    std::swap(outputState.data[leftIdx],outputState.data[blankIdx]);
+    int leftIdx = blankIdx - 1;
+    std::swap(outputState.data[leftIdx], outputState.data[blankIdx]);
     return true;
   }
 
@@ -241,8 +242,8 @@ public:
     int blankIdx = getBlankIndex();
     if (blankIdx % 3 == 2) return false;
     outputState = *this;
-    int RightIdx = blankIdx+1;
-    std::swap(outputState.data[RightIdx],outputState.data[blankIdx]);
+    int RightIdx = blankIdx + 1;
+    std::swap(outputState.data[RightIdx], outputState.data[blankIdx]);
     return true;
   }
 
@@ -277,7 +278,8 @@ public:
     return adjacentStates;
   }
 
-  // Check if the "other" state is one of the states adjacent to the current state
+  // Check if the "other" state is one of the states adjacent to the current
+  // state
   bool isAdjacent(const PuzzleState& other) const {
     auto adjacentStates = getAdjacentStates();
     for (auto& neighbor : adjacentStates) {
@@ -296,7 +298,8 @@ public:
   // ("static" here means the function does not belong to any one instance of
   //  the class. It belongs to the entire class type namespace, there is no
   //  "this" pointer. Instead we pass in what we need to do work on.)
-  static PuzzleState getRandomMove(const PuzzleState& curState, const PuzzleState& prevState) {
+  static PuzzleState getRandomMove(const PuzzleState& curState,
+                                   const PuzzleState& prevState) {
     std::vector<PuzzleState> adjacentStates = curState.getAdjacentStates();
     std::vector<PuzzleState> validDestinations;
     for (auto& neighbor : adjacentStates) {
@@ -316,23 +319,23 @@ public:
   // (See the comment on getRandomMove about static member functions.)
   static PuzzleState randomizePuzzle(PuzzleState curState, int maxSteps) {
     PuzzleState prevState = curState;
-    for (int i=0; i<maxSteps; i++) {
+    for (int i = 0; i < maxSteps; i++) {
       PuzzleState nextState = getRandomMove(curState, prevState);
       prevState = curState;
       curState = nextState;
     }
     return curState;
   }
-
 };
 
-// Implements operator<< support for plotting a PuzzleState diagram to a std::ostream.
-static inline std::ostream& operator<<(std::ostream& os, const PuzzleState& puzzle) {
+// Implements operator<< support for plotting a PuzzleState diagram to a
+// std::ostream.
+static inline std::ostream& operator<<(std::ostream& os,
+                                       const PuzzleState& puzzle) {
   if (PuzzleState::allowPlotting) {
     os << puzzle.stringify() << std::endl;
     return puzzle.plot(os);
-  }
-  else {
+  } else {
     os << puzzle.stringify() << std::endl;
     return os;
   }
@@ -342,18 +345,17 @@ static inline std::ostream& operator<<(std::ostream& os, const PuzzleState& puzz
 // can be used as a key in std::unordered_map or std::unordered_set
 // Reference: https://en.cppreference.com/w/cpp/utility/hash
 namespace std {
-  // There are more comments about how this works in the provided file IntPair2.h.
-  // See also the instructions PDF for the Unordered Map project.
-  template <>
-  struct hash<PuzzleState> {
-    std::size_t operator() (const PuzzleState& puzzle) const {
-      // Create the unique string that compactly represents this puzzle state.
-      std::string dataString = puzzle.stringify();
-      // Get the default hashing function object for a std::string.
-      std::hash<std::string> stringHasher;
-      // Use the string hasher on our unique string.
-      return stringHasher(dataString);
-    }
-  };
-}
-
+// There are more comments about how this works in the provided file IntPair2.h.
+// See also the instructions PDF for the Unordered Map project.
+template <>
+struct hash<PuzzleState> {
+  std::size_t operator()(const PuzzleState& puzzle) const {
+    // Create the unique string that compactly represents this puzzle state.
+    std::string dataString = puzzle.stringify();
+    // Get the default hashing function object for a std::string.
+    std::hash<std::string> stringHasher;
+    // Use the string hasher on our unique string.
+    return stringHasher(dataString);
+  }
+};
+}  // namespace std

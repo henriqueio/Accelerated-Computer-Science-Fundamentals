@@ -5,27 +5,27 @@
  *
  * @author Eric Huber
  *
-**/
+ **/
 
 #pragma once
 
+#include <algorithm>  // for std::sort
 #include <iostream>
+#include <sstream>  // for std::stringstream
 #include <stdexcept>
+#include <string>
 #include <unordered_map>
 #include <unordered_set>
-#include <algorithm> // for std::sort
 #include <vector>
-#include <string>
-#include <sstream> // for std::stringstream
 
-#include "IntPair2.h" // for IntPair and point printing support
+#include "IntPair2.h"  // for IntPair and point printing support
 
 // This implements a very simple version of an adjacency list graph,
 // where each vertex must be a point with 2D integer coordinates.
 // For simplicity, we'll assume points are in (row, column) format,
 // and they have integer coordinates between 0 and 99, inclusive.
 class GridGraph {
-public:
+ public:
   // We use the concept of adjacency lists for our graph implementation.
   // However, each vertex's list of adjacent vertices will actually be a set.
   // For convenience, we make a type alias for a set of coordinate pairs.
@@ -34,8 +34,8 @@ public:
   // adjacencyMap records both the vertices and (implicitly) the edges.
   // The keys are of type IntPair, which we mean to be grid point coordinates.
   // Each key entry in the map represents a vertex that exists in the graph.
-  // The values are of type NeighborSet. Thus, each key is associated with a set of
-  // coordinates that are the adjacent points (those connected by an edge).
+  // The values are of type NeighborSet. Thus, each key is associated with a set
+  // of coordinates that are the adjacent points (those connected by an edge).
   std::unordered_map<IntPair, GridGraph::NeighborSet> adjacencyMap;
 
   // For better accessibility with screen readers, you can set this to false
@@ -63,7 +63,7 @@ public:
     int dist_x = p1.first - p2.first;
     int dist_y = p1.second - p2.second;
     // Compute the squared Euclidean distance.
-    int dist2 = dist_x*dist_x + dist_y*dist_y;
+    int dist2 = dist_x * dist_x + dist_y * dist_y;
     // We require the squared distance to be 1.
     // (No need to take the square root, because 1*1 == 1. It's very good
     //  that we can do this entirely with integer arithmetic, too.)
@@ -82,9 +82,9 @@ public:
   // This inserts points p1 and p2 (if they don't already exist), and it
   // marks them as adjacent to each other.
   void insertEdge(const IntPair& p1, const IntPair& p2) {
-
     if (!checkUnitDistance(p1, p2)) {
-      std::cerr << "Error: Can't add edge from " << p1 << " to " << p2 << std::endl;
+      std::cerr << "Error: Can't add edge from " << p1 << " to " << p2
+                << std::endl;
       std::cerr << "Points must be 1 unit apart." << std::endl;
       throw std::runtime_error("Requested an invalid edge insertion");
     }
@@ -107,7 +107,7 @@ public:
   // If the edge exists, remove it by having both points mark each other
   // as not adjacent.
   void removeEdge(const IntPair& p1, const IntPair& p2) {
-    if (hasEdge(p1,p2)) {
+    if (hasEdge(p1, p2)) {
       adjacencyMap[p1].erase(p2);
       adjacencyMap[p2].erase(p1);
     }
@@ -119,13 +119,10 @@ public:
   void removePoint(const IntPair& p1);
 
   // Report whether the graph contains this point.
-  bool hasPoint(const IntPair& p) const {
-    return adjacencyMap.count(p);
-  }
+  bool hasPoint(const IntPair& p) const { return adjacencyMap.count(p); }
 
   // Can be used for convenience to see if two points are adjacent.
   bool hasEdge(const IntPair& p1, const IntPair& p2) const {
-
     // We'll check if the points are adjacent (i.e., there is an edge)
     // but we'll also do a sanity check in the process, to make sure
     // the graph setup doesn't have an inconsistency.
@@ -150,18 +147,17 @@ public:
 
     if (directions == 0) {
       return false;
-    }
-    else if (directions == 2) {
+    } else if (directions == 2) {
       return true;
-    }
-    else {
+    } else {
       // This means one endpoint refers to the other, but not the other way
       // around. Both ends should be recorded as adjacent to each other.
       // Most likely this means there is either a bug in insertEdge,
       // or the programmer tried to insert an edge manually and made a mistake,
       // or an endpoint was deleted but maintenance was not performed on its
       // neighboring points' adjacency lists.
-      throw std::runtime_error("hasEdge: edge found, but only in one direction");
+      throw std::runtime_error(
+          "hasEdge: edge found, but only in one direction");
     }
   }
 
@@ -186,17 +182,15 @@ public:
   // Check for inequality of two GridGraph objects by delegating to the
   // implementation of operator==. Remember that "this" is a pointer to the
   // current instance of the class, so "*this" is the current GridGraph itself.
-  bool operator!=(const GridGraph& other) const {
-    return !(*this == other);
-  }
+  bool operator!=(const GridGraph& other) const { return !(*this == other); }
 
   // Plot a GridGraph diagram in the terminal, graphically.
   // For more accessible printouts, use printDetails instead.
   // (The function body is defined in GridGraph.cpp)
   std::ostream& plot(std::ostream& os) const;
 
-  // Print a list of the internal contents of a GridGraph structure in an accessible way.
-  // (The function body is defined in GridGraph.cpp)
+  // Print a list of the internal contents of a GridGraph structure in an
+  // accessible way. (The function body is defined in GridGraph.cpp)
   std::ostream& printDetails(std::ostream& os) const;
 
   // Let the constructors and destructor just be the defaults!
@@ -204,17 +198,17 @@ public:
   // data structure types (unordered_map, unordered_set, pair),
   // these will use the appropriate memory management and destructors
   // that have already been defined for them by the standard library.
-
 };
 
-// Some of the member function bodies are defined in GridGraph.cpp, so please look there too.
+// Some of the member function bodies are defined in GridGraph.cpp, so please
+// look there too.
 
 // Adds << support for plotting a GridGraph.
-static inline std::ostream& operator<<(std::ostream& os, const GridGraph& graph) {
+static inline std::ostream& operator<<(std::ostream& os,
+                                       const GridGraph& graph) {
   if (GridGraph::allowPlotting) {
     return graph.plot(os);
-  }
-  else {
+  } else {
     return graph.printDetails(os);
   }
 }

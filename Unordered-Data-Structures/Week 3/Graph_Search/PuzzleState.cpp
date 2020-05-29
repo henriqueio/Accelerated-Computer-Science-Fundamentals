@@ -5,7 +5,7 @@
  *
  * @author Eric Huber
  *
-**/
+ **/
 
 #include "PuzzleState.h"
 
@@ -17,4 +17,3 @@
 // code file), but technically it's part of the PuzzleState class.
 // See notes in PuzzleState.h.
 bool PuzzleState::allowPlotting = true;
-

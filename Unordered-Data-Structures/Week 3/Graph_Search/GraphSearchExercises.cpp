@@ -7,7 +7,7 @@
  *
  * @author Eric Huber - University of Illinois staff
  *
-**/
+ **/
 
 // Before beginning these exercises, you should read the instructions PDF,
 // and look through the other code files in this directory for examples and
@@ -64,7 +64,6 @@ int GridGraph::countEdges() const {
 // connected to it by implicit edges. It shouldn't change anything else about
 // the graph.
 void GridGraph::removePoint(const IntPair& p1) {
-
   // If the point p1 is not in the GridGraph, then do nothing and return.
   // (We use GridGraph::hasPoint for convenience. GridGraph already has
   //  various functions that may be useful. It's okay for class member
@@ -162,8 +161,8 @@ void GridGraph::removePoint(const IntPair& p1) {
 // goal, if there exists any path at all. Then we return the path as a list of
 // points. If there is no path, or if we take too many steps without success,
 // then we return an empty list.
-std::list<IntPair> graphBFS(const IntPair& start, const IntPair& goal, const GridGraph& graph) {
-
+std::list<IntPair> graphBFS(const IntPair& start, const IntPair& goal,
+                            const GridGraph& graph) {
   // Intialization details -------------------------------------------------
 
   // maxDist failsafe:
@@ -191,21 +190,26 @@ std::list<IntPair> graphBFS(const IntPair& start, const IntPair& goal, const Gri
 
   // Queue of graph vertices to explore next. This is an ordinary FIFO queue
   // (first in, first out), not a priority queue. When we say "explore" a vertex
-  // in this assignment, we mean to dequeue it and loop over its adjacent vertices.
+  // in this assignment, we mean to dequeue it and loop over its adjacent
+  // vertices.
   std::queue<IntPair> exploreQ;
 
-  // Map that associates a given point with its predecessor (the neighbor that discovered it first)
-  // This will allow us to reconstruct the path once the goal is found.
+  // Map that associates a given point with its predecessor (the neighbor that
+  // discovered it first) This will allow us to reconstruct the path once the
+  // goal is found.
   std::unordered_map<IntPair, IntPair> pred;
-  // Example usage: "pred[B] = A" records A as the predecessor of B, meaning that A discovered B.
+  // Example usage: "pred[B] = A" records A as the predecessor of B, meaning
+  // that A discovered B.
 
-  // Map that associates a given point with its shortest-path distance from the starting point.
-  // This lets us see if we've taken too many steps (see the above comment about maxDist).
-  // The simplest implementations of BFS don't need a distance record like this,
-  // but it can be useful information, and other graph search algorithms like Dijkstra's
-  // algorithm do need to use such a record.
-  // Remember: with std::unordered_map, the first time we look up a key with [], it will be
-  //  inserted if it doesn't exist yet. Also, its initial int value will be 0 by default.
+  // Map that associates a given point with its shortest-path distance from the
+  // starting point. This lets us see if we've taken too many steps (see the
+  // above comment about maxDist). The simplest implementations of BFS don't
+  // need a distance record like this, but it can be useful information, and
+  // other graph search algorithms like Dijkstra's algorithm do need to use such
+  // a record. Remember: with std::unordered_map, the first time we look up a
+  // key with [], it will be
+  //  inserted if it doesn't exist yet. Also, its initial int value will be 0 by
+  //  default.
   std::unordered_map<IntPair, int> dist;
 
   // Set of graph vertices that have already been visited. (In this case, by
@@ -214,8 +218,8 @@ std::list<IntPair> graphBFS(const IntPair& start, const IntPair& goal, const Gri
   // but not necessarily removed from the queue yet.) This lets us avoid
   // re-enqueueing graph vertices that we've already enqueued for exploration.
   // (For further optimization, we could just use pred to query whether a vertex
-  //  has been discovered previously, but using this separate set is more explicit
-  //  for the sake of explaining the concepts here.)
+  //  has been discovered previously, but using this separate set is more
+  //  explicit for the sake of explaining the concepts here.)
   std::unordered_set<IntPair> visitedSet;
 
   // This "dequeued" set isn't strictly part of the traditional BFS algorithm,
@@ -224,11 +228,14 @@ std::list<IntPair> graphBFS(const IntPair& start, const IntPair& goal, const Gri
   // because we also have the visitedSet to use.
   std::unordered_set<IntPair> dequeuedSet;
 
-  // Check for an erroneous problem specification, in case we made a simple mistake.
-  // (Note that for puzzleBFS, the PuzzleState constructors already check for obviously
+  // Check for an erroneous problem specification, in case we made a simple
+  // mistake. (Note that for puzzleBFS, the PuzzleState constructors already
+  // check for obviously
   //  invalid configurations, so you don't need to do this.)
-  if (!graph.hasPoint(start)) throw std::runtime_error("Starting point doesn't exist in graph");
-  if (!graph.hasPoint(goal)) throw std::runtime_error("Goal point doesn't exist in graph");
+  if (!graph.hasPoint(start))
+    throw std::runtime_error("Starting point doesn't exist in graph");
+  if (!graph.hasPoint(goal))
+    throw std::runtime_error("Goal point doesn't exist in graph");
 
   // Initialize the predecessor of the start vertex as itself. You might
   // wonder why we don't just leave pred[start] non-existent, because that's
@@ -248,69 +255,77 @@ std::list<IntPair> graphBFS(const IntPair& start, const IntPair& goal, const Gri
   // in the visited set.
   visitedSet.insert(start);
 
-  // We will begin searching from the start point. Push a copy of it into the exploration queue.
+  // We will begin searching from the start point. Push a copy of it into the
+  // exploration queue.
   exploreQ.push(start);
 
   // Below, a "flag" just means a variable for controlling a loop condition.
 
-  // foundGoal is a flag for controlling the loop below. It's initialized as false,
-  // unless we start at the goal, in which case it's initialized as true.
+  // foundGoal is a flag for controlling the loop below. It's initialized as
+  // false, unless we start at the goal, in which case it's initialized as true.
   bool foundGoal = (start == goal);
 
   // tooManySteps is a flag that will help us break out of the loop if we detect
-  // that we've already taken too many steps and probably need to give up searching.
+  // that we've already taken too many steps and probably need to give up
+  // searching.
   bool tooManySteps = false;
 
   // The main search loop --------------------------------------------------
 
-  // While the exploration queue isn't empty yet, there are still discovered points to explore.
-  // Also, we would want to stop looping if foundGoal or tooManySteps became true.
+  // While the exploration queue isn't empty yet, there are still discovered
+  // points to explore. Also, we would want to stop looping if foundGoal or
+  // tooManySteps became true.
   while (!exploreQ.empty() && !foundGoal && !tooManySteps) {
-
     // Get a copy of the next point to explore from the front of the queue.
     // This becomes the "current" point.
     auto curPoint = exploreQ.front();
     // Pop to remove the point from the queue.
     exploreQ.pop();
 
-    // Error prevention: Check whether this vertex has ever been dequeued in the past.
-    // (Checking for vertices that are dequeued more than once isn't strictly considered
-    //  part of the BFS algorithm, because in the loop below, you are meant to check for
-    //  previously-visited vertices while considering the adjacent vertices. We do this
-    //  here for additional sanity checking, in case you have made any mistakes that would
-    //  cause an infinite loop.)
+    // Error prevention: Check whether this vertex has ever been dequeued in the
+    // past. (Checking for vertices that are dequeued more than once isn't
+    // strictly considered
+    //  part of the BFS algorithm, because in the loop below, you are meant to
+    //  check for previously-visited vertices while considering the adjacent
+    //  vertices. We do this here for additional sanity checking, in case you
+    //  have made any mistakes that would cause an infinite loop.)
     bool curPointWasPreviouslyDequeued = dequeuedSet.count(curPoint);
     if (curPointWasPreviouslyDequeued) {
-      std::cout << "graphBFS ERROR: Dequeued a vertex that had already been dequeued before." << std::endl
-        << " If you're using visitedSet correctly, then no vertex should ever be added" << std::endl
-        << " to the explore qeueue more than once. [Returning an empty path now.]" << std::endl << std::endl;
+      std::cout << "graphBFS ERROR: Dequeued a vertex that had already been "
+                   "dequeued before."
+                << std::endl
+                << " If you're using visitedSet correctly, then no vertex "
+                   "should ever be added"
+                << std::endl
+                << " to the explore qeueue more than once. [Returning an empty "
+                   "path now.]"
+                << std::endl
+                << std::endl;
       return std::list<IntPair>();
-    }
-    else {
-      // We'll record that this vertex has been dequeued by adding a copy of it to the set.
+    } else {
+      // We'll record that this vertex has been dequeued by adding a copy of it
+      // to the set.
       dequeuedSet.insert(curPoint);
     }
 
     // =====================================================================
     // TODO: Your code here!
-    // We'll need to loop over the neighbors that are the points adjacent to curPoint.
-    // Get a copy of the set of neighbors we're going to loop over.
-    GridGraph::NeighborSet neighbors; // Change this...
+    // We'll need to loop over the neighbors that are the points adjacent to
+    // curPoint. Get a copy of the set of neighbors we're going to loop over.
+    GridGraph::NeighborSet neighbors;  // Change this...
     // =====================================================================
 
     for (auto neighbor : neighbors) {
-
       // ==================================================================
       // TODO: Your code here!
       // Check whether the neighbor has already been visited.
-      bool neighborWasAlreadyVisited = false; // Change this...
+      bool neighborWasAlreadyVisited = false;  // Change this...
       // ==================================================================
 
-      // If this adjacent vertex has NOT been visited before, we will visit it now.
-      // If it HAS been visited before, we do nothing and continue to loop.
+      // If this adjacent vertex has NOT been visited before, we will visit it
+      // now. If it HAS been visited before, we do nothing and continue to loop.
       // This way, we avoid enqueueing the same vertex more than once.
       if (!neighborWasAlreadyVisited) {
-
         // ================================================================
         // TODO: Your code here!
 
@@ -328,82 +343,95 @@ std::list<IntPair> graphBFS(const IntPair& start, const IntPair& goal, const Gri
         // ================================================================
 
         // Check if we've taken too many steps so far.
-        // The shortest-path distance to this neighbor is the shortest-path distance
-        // to curPoint, plus one. (We know that dist[curPoint] has already been
-        // initialized because we previously reached curPoint from another point,
-        // and it was assigned a value at that time, or else curPoint is the
-        // start point that we explicitly initialized at the beginning.)
-        dist[neighbor] = dist[curPoint]+1;
+        // The shortest-path distance to this neighbor is the shortest-path
+        // distance to curPoint, plus one. (We know that dist[curPoint] has
+        // already been initialized because we previously reached curPoint from
+        // another point, and it was assigned a value at that time, or else
+        // curPoint is the start point that we explicitly initialized at the
+        // beginning.)
+        dist[neighbor] = dist[curPoint] + 1;
         if (dist[neighbor] > maxDist) {
           // If the shortest path to this neighbor is a further distance than we
-          // are allowed to explore, then flag that we have taken too many steps,
-          // and break out of the nearest loop (the for loop). After that, the
-          // tooManySteps flag will cause the while loop to stop also.
+          // are allowed to explore, then flag that we have taken too many
+          // steps, and break out of the nearest loop (the for loop). After
+          // that, the tooManySteps flag will cause the while loop to stop also.
 
-          // You may ask: How do we know to give up here? What if there are other
-          // paths we can still explore through the exploration queue, that are shorter?
-          // We know there are not, because in BFS, we identify all the reachable nodes
-          // of distance 1, and only after that, all the reachable nodes with distance 2, etc.
-          // So right now, if we need "too many" steps to reach this discovered neighbor,
+          // You may ask: How do we know to give up here? What if there are
+          // other paths we can still explore through the exploration queue,
+          // that are shorter? We know there are not, because in BFS, we
+          // identify all the reachable nodes of distance 1, and only after
+          // that, all the reachable nodes with distance 2, etc. So right now,
+          // if we need "too many" steps to reach this discovered neighbor,
           // we'll also need "too many" steps to reach any other node later.
-          // This is the same reasoning that allows us to conclude we have found the
-          // shortest path, when we finally do reach the goal.
+          // This is the same reasoning that allows us to conclude we have found
+          // the shortest path, when we finally do reach the goal.
           tooManySteps = true;
           break;
         }
 
-        // If we haven't taken too many steps yet, and if the neighbor is the goal,
-        // then flag that we have found the goal, and break out of the "for" loop.
-        // The foundGoal flag will then cause the "while" loop to stop, also.
+        // If we haven't taken too many steps yet, and if the neighbor is the
+        // goal, then flag that we have found the goal, and break out of the
+        // "for" loop. The foundGoal flag will then cause the "while" loop to
+        // stop, also.
         if (neighbor == goal) {
           foundGoal = true;
           break;
         }
 
-      } // end of handling the just-discovered neighbor
+      }  // end of handling the just-discovered neighbor
 
-    } // end of for loop
-  } // end of while loop
+    }  // end of for loop
+  }    // end of while loop
 
   // Now that the looping is over, we can evaluate what the results were.
 
-  // If we took too many steps, we issue an error message and return an empty list.
+  // If we took too many steps, we issue an error message and return an empty
+  // list.
   if (tooManySteps) {
-    std::cout << "graphBFS warning: Could not reach goal within the maximum allowed steps.\n (This may be expected if no path exists.)" << std::endl << std::endl;
+    std::cout << "graphBFS warning: Could not reach goal within the maximum "
+                 "allowed steps.\n (This may be expected if no path exists.)"
+              << std::endl
+              << std::endl;
     return std::list<IntPair>();
   }
 
   // If we never found the goal even after exploring the entire reachable graph,
   // then issue an error message and return an empty list.
   if (!foundGoal) {
-    std::cout << "graphBFS warning: Could not reach goal. (This may be expected\n if no path exists.)" << std::endl << std::endl;
+    std::cout << "graphBFS warning: Could not reach goal. (This may be "
+                 "expected\n if no path exists.)"
+              << std::endl
+              << std::endl;
     return std::list<IntPair>();
   }
 
-  // Otherwise, we must have found a path from start to goal, and it is as short as possible.
-  // (If there exist multiple shortest paths from start to goal that all have the same length,
+  // Otherwise, we must have found a path from start to goal, and it is as short
+  // as possible. (If there exist multiple shortest paths from start to goal
+  // that all have the same length,
   //  we have found ONE of these shortest paths.)
 
   // Make a new, empty list of IntPairs in the stack memory at function scope.
-  // This will represent the path from start to goal. We'll return it by value at the end.
+  // This will represent the path from start to goal. We'll return it by value
+  // at the end.
   std::list<IntPair> path;
   // We will walk back from the goal to the start using the predecessor records.
   auto cur = goal;
-  // Push the currently-walked vertex onto the FRONT of the list, so that as we walk back
-  // from goal to start, the created list will be in order from start to goal.
+  // Push the currently-walked vertex onto the FRONT of the list, so that as we
+  // walk back from goal to start, the created list will be in order from start
+  // to goal.
   path.push_front(cur);
   // Make sure that there is a predecessor recorded for cur, and then while the
-  // predecessor of cur is not recorded as itself, keep looping. (The start vertex
-  // recorded itself as its predecessor, so then we know to stop.)
+  // predecessor of cur is not recorded as itself, keep looping. (The start
+  // vertex recorded itself as its predecessor, so then we know to stop.)
   while (pred.count(cur) && pred[cur] != cur) {
+    // It's good to note here that the "&&" operator has "short circuiting"
+    // behavior, which means that in "A && B", if A is false, then B is never
+    // evaluated at all. The whole expression is immediately determined to be
+    // false. This way, the "A" part can be used as a safeguard on the "B" part,
+    // if "B" could cause problems.
 
-    // It's good to note here that the "&&" operator has "short circuiting" behavior,
-    // which means that in "A && B", if A is false, then B is never evaluated at all.
-    // The whole expression is immediately determined to be false. This way, the
-    // "A" part can be used as a safeguard on the "B" part, if "B" could cause problems.
-
-    // Push a copy of the predecessor onto the front of the list, as we reconstruct
-    // the path back to the start.
+    // Push a copy of the predecessor onto the front of the list, as we
+    // reconstruct the path back to the start.
     path.push_front(pred[cur]);
     // Step backwards to the predecessor so we can continue looping.
     cur = pred[cur];
@@ -457,8 +485,8 @@ std::list<IntPair> graphBFS(const IntPair& start, const IntPair& goal, const Gri
 // and we return the shortest path (which represents the solution steps).
 // If there is no path to the goal, or if we take too many steps without
 // success, then the puzzle cannot be solved, and we return an empty list.
-std::list<PuzzleState> puzzleBFS(const PuzzleState& start, const PuzzleState& goal) {
-
+std::list<PuzzleState> puzzleBFS(const PuzzleState& start,
+                                 const PuzzleState& goal) {
   // Intialization details -------------------------------------------------
 
   // maxDist failsafe:
@@ -491,41 +519,44 @@ std::list<PuzzleState> puzzleBFS(const PuzzleState& start, const PuzzleState& go
   // The main search loop --------------------------------------------------
 
   while (!exploreQ.empty() && !foundGoal && !tooManySteps) {
-
     auto curState = exploreQ.front();
     exploreQ.pop();
 
     bool curPointWasPreviouslyDequeued = dequeuedSet.count(curState);
     if (curPointWasPreviouslyDequeued) {
-      std::cout << "puzzleBFS ERROR: Dequeued a vertex that had already been dequeued before." << std::endl
-        << " If you're using visitedSet correctly, then no vertex should ever be added" << std::endl
-        << " to the explore qeueue more than once. [Returning an empty path now.]" << std::endl << std::endl;
+      std::cout << "puzzleBFS ERROR: Dequeued a vertex that had already been "
+                   "dequeued before."
+                << std::endl
+                << " If you're using visitedSet correctly, then no vertex "
+                   "should ever be added"
+                << std::endl
+                << " to the explore qeueue more than once. [Returning an empty "
+                   "path now.]"
+                << std::endl
+                << std::endl;
       return std::list<PuzzleState>();
-    }
-    else {
+    } else {
       dequeuedSet.insert(curState);
     }
 
     // =====================================================================
     // TODO: Your code here!
-    // We'll need to loop over the neighbors that are the points adjacent to curState.
-    // We need a collection of neighbors we're going to loop over.
-    
-    auto neighbors = {start}; // Change this! This line is totally wrong.
+    // We'll need to loop over the neighbors that are the points adjacent to
+    // curState. We need a collection of neighbors we're going to loop over.
+
+    auto neighbors = {start};  // Change this! This line is totally wrong.
 
     // Hint: Look at PuzzleState.h
     // =====================================================================
 
     for (auto neighbor : neighbors) {
-
       // ==================================================================
       // TODO: Your code here!
       // Check whether the neighbor has already been visited.
-      bool neighborWasAlreadyVisited = false; // Change this...
+      bool neighborWasAlreadyVisited = false;  // Change this...
       // ==================================================================
 
       if (!neighborWasAlreadyVisited) {
-
         // ================================================================
         // TODO: Your code here!
 
@@ -542,7 +573,7 @@ std::list<PuzzleState> puzzleBFS(const PuzzleState& start, const PuzzleState& go
 
         // ================================================================
 
-        dist[neighbor] = dist[curState]+1;
+        dist[neighbor] = dist[curState] + 1;
         if (dist[neighbor] > maxDist) {
           tooManySteps = true;
           break;
@@ -553,18 +584,24 @@ std::list<PuzzleState> puzzleBFS(const PuzzleState& start, const PuzzleState& go
           break;
         }
 
-      } // end of handling the just-discovered neighbor
+      }  // end of handling the just-discovered neighbor
 
-    } // end of for loop
-  } // end of while loop
+    }  // end of for loop
+  }    // end of while loop
 
   if (tooManySteps) {
-    std::cout << "puzzleBFS warning: Could not reach goal within the maximum allowed steps.\n (This may be expected if no path exists.)" << std::endl << std::endl;
+    std::cout << "puzzleBFS warning: Could not reach goal within the maximum "
+                 "allowed steps.\n (This may be expected if no path exists.)"
+              << std::endl
+              << std::endl;
     return std::list<PuzzleState>();
   }
 
   if (!foundGoal) {
-    std::cout << "puzzleBFS warning: Could not reach goal. (This may be expected\n if no path exists.)" << std::endl << std::endl;
+    std::cout << "puzzleBFS warning: Could not reach goal. (This may be "
+                 "expected\n if no path exists.)"
+              << std::endl
+              << std::endl;
     return std::list<PuzzleState>();
   }
 
@@ -578,5 +615,3 @@ std::list<PuzzleState> puzzleBFS(const PuzzleState& start, const PuzzleState& go
 
   return path;
 }
-
-

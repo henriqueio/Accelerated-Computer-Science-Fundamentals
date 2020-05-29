@@ -5,7 +5,7 @@
  *
  * @author Eric Huber
  *
-**/
+ **/
 
 #include "GridGraph.h"
 
@@ -56,7 +56,6 @@ bool GridGraph::allowVerboseTextDescription = true;
 // Allow a GridGraph to be plotted graphically in the terminal.
 // For more accessible printouts, use printDetails instead.
 std::ostream& GridGraph::plot(std::ostream& os) const {
-
   // If plotting is deactivated, do nothing.
   if (!GridGraph::allowPlotting) return os;
 
@@ -68,7 +67,8 @@ std::ostream& GridGraph::plot(std::ostream& os) const {
   // the first coordinate increases as we go lower,
   // and the second coordinate increases as we go to the right.
 
-  // Identify the min and max row and col in use by any point (or 0 for an empty graph).
+  // Identify the min and max row and col in use by any point (or 0 for an empty
+  // graph).
   int minRow = 0;
   int minCol = 0;
   int maxRow = 0;
@@ -93,9 +93,9 @@ std::ostream& GridGraph::plot(std::ostream& os) const {
   // We will plot the GridGraph starting from minRow, where minCol will be
   // on the left side of the terminal output. (This part is a bit complicated.)
   for (int row = minRow; row <= maxRow; row++) {
-    // A string stream lets us do stream operations with "<<" to prepare a string.
-    // We'll do this to prepare the decorations in the line below the current line
-    // we are printing.
+    // A string stream lets us do stream operations with "<<" to prepare a
+    // string. We'll do this to prepare the decorations in the line below the
+    // current line we are printing.
     std::stringstream understream;
     for (int col = minCol; col <= maxCol; col++) {
       // pos is the position at {row,col} in the grid, which may not actually
@@ -103,7 +103,8 @@ std::ostream& GridGraph::plot(std::ostream& os) const {
       IntPair pos = {row, col};
       // If this point is in the graph, put a point marker.
       if (hasPoint(pos)) {
-        // Output the point (expected to be padded to 7 characters): " (1,2) ", "(12,34)"
+        // Output the point (expected to be padded to 7 characters): " (1,2) ",
+        // "(12,34)"
         os << pos;
       }
       // If the point isn't in the graph, put padding spaces.
@@ -111,9 +112,9 @@ std::ostream& GridGraph::plot(std::ostream& os) const {
         os << "       ";
       }
       // posRight is the position to the right
-      IntPair posRight = {row, col+1};
+      IntPair posRight = {row, col + 1};
       // If there's an edge to the right, print a horizontal line
-      if (hasEdge(pos,posRight)) {
+      if (hasEdge(pos, posRight)) {
         os << "----";
       }
       // If there's no edge to the right, and this isn't the rightmost column,
@@ -124,9 +125,9 @@ std::ostream& GridGraph::plot(std::ostream& os) const {
       // We'll prepare the understream if this isn't the bottom row.
       if (row < maxRow) {
         // pos_down is the position below the current position
-        IntPair posDown = {row+1, col};
+        IntPair posDown = {row + 1, col};
         // If there's an edge beneath this point, then draw a vertical line
-        if (hasEdge(pos,posDown)) {
+        if (hasEdge(pos, posDown)) {
           understream << "   |   ";
         }
         // If there's no edge below, just draw spaces.
@@ -155,9 +156,9 @@ std::ostream& GridGraph::plot(std::ostream& os) const {
   return os;
 }
 
-// Print a list of the internal contents of a GridGraph structure in an accessible way.
+// Print a list of the internal contents of a GridGraph structure in an
+// accessible way.
 std::ostream& GridGraph::printDetails(std::ostream& os) const {
-
   if (adjacencyMap.empty()) {
     return os << "The graph is empty." << std::endl;
   }
@@ -179,7 +180,8 @@ std::ostream& GridGraph::printDetails(std::ostream& os) const {
     // value: neighbor point set
     const auto& p1_neighbors = kv.second;
 
-    // Points that have no adjacencies are isolated points, with no incident edges.
+    // Points that have no adjacencies are isolated points, with no incident
+    // edges.
     if (p1_neighbors.empty()) {
       isolatedPointSet.insert(p1);
     }
@@ -198,13 +200,12 @@ std::ostream& GridGraph::printDetails(std::ostream& os) const {
       for (const auto& p2 : p1_neighbors) {
         IntPairPair edge;
         if (p1 < p2) {
-          edge = std::make_pair(p1,p2);
-        }
-        else {
+          edge = std::make_pair(p1, p2);
+        } else {
           // If the edge key looks "backwards," then flip it for uniformity.
           // That is, the same undirected edge (A,B) and (B,A) will always be
           // recorded as (A,B).
-          edge = std::make_pair(p2,p1);
+          edge = std::make_pair(p2, p1);
         }
         edgeSet.insert(edge);
       }
@@ -214,7 +215,8 @@ std::ostream& GridGraph::printDetails(std::ostream& os) const {
   // You can initialize a vector with an unordered set's contents
   // if you use this constructor that takes begin and end iterators.
   std::vector<IntPairPair> edgeVec(edgeSet.begin(), edgeSet.end());
-  std::vector<IntPair> isolatedPointVec(isolatedPointSet.begin(), isolatedPointSet.end());
+  std::vector<IntPair> isolatedPointVec(isolatedPointSet.begin(),
+                                        isolatedPointSet.end());
 
   // We'll sort these just for appearance.
   // Temporarily make a sorted array of the point coordinates using
@@ -229,18 +231,21 @@ std::ostream& GridGraph::printDetails(std::ostream& os) const {
   std::sort(isolatedPointVec.begin(), isolatedPointVec.end());
 
   os << "Edges: ";
-  if (edgeVec.empty()) os << "None." << std::endl;
+  if (edgeVec.empty())
+    os << "None." << std::endl;
   else {
     for (IntPairPair edge : edgeVec) {
       auto p1 = edge.first;
       auto p2 = edge.second;
-      os << "[(" << p1.first << "," << p1.second << ") to (" << p2.first << "," << p2.second << ")] ";
+      os << "[(" << p1.first << "," << p1.second << ") to (" << p2.first << ","
+         << p2.second << ")] ";
     }
     os << std::endl;
   }
 
   os << "Isolated points: ";
-  if (isolatedPointVec.empty()) os << "None." << std::endl;
+  if (isolatedPointVec.empty())
+    os << "None." << std::endl;
   else {
     for (IntPair p : isolatedPointVec) {
       os << p << " ";
@@ -250,5 +255,3 @@ std::ostream& GridGraph::printDetails(std::ostream& os) const {
 
   return os;
 }
-
-
