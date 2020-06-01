@@ -54,7 +54,6 @@ int GridGraph::countEdges() const {
   // =======================================================================
 
   std::unordered_set<IntPairPair> edgeSet;
-  std::unordered_set<IntPair> isolatedPointSet;
 
   // Loop over key-value pairs
   for (const auto& kv : adjacencyMap) {
@@ -63,23 +62,13 @@ int GridGraph::countEdges() const {
     // value: neighbor point set
     const auto& p1_neighbors = kv.second;
 
-    // Points that have no adjacencies are isolated points, with no incident
-    // edges.
-    if (p1_neighbors.empty()) {
-      isolatedPointSet.insert(p1);
-    }
-    // Otherwise, insert all the edges found into the set of edges.
-    // std::unordered_set only stores one element per key inserted,
-    // so inserting the same key multiple times does nothing. You could
-    // count the number of unique edges this way. Since we're interpreting
-    // IntPairPair (a pair of IntPair) as an undirected edge here, we need
-    // to be careful to ensure unique representation: For any points A and B,
-    // the edge (A,B) is the same as the edge (B,A). To keep an edge key
-    // consistent regardless of which direction it is viewed from, an ordering
-    // is imposed on the endpoints using the "<" operator. Note that we can
-    // compare two IntPair with "<" because STL gives us an implementation
-    // of "<" for std::pair<int,int> by default.
-    else {
+    // Insert all the edges found into the set of edges
+    if (!p1_neighbors.empty()) {
+      // For any points A and B,
+      // the edge (A,B) is the same as the edge (B,A). To keep an edge key
+      // consistent regardless of which direction it is viewed from, an ordering
+      // is imposed on the endpoints using the "<" operator.
+
       for (const auto& p2 : p1_neighbors) {
         IntPairPair edge;
         if (p1 < p2) {
