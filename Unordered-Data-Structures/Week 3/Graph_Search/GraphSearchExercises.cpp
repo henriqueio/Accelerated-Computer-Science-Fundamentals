@@ -53,6 +53,50 @@ int GridGraph::countEdges() const {
   // TODO: Your code here!
   // =======================================================================
 
+  std::unordered_set<IntPairPair> edgeSet;
+  std::unordered_set<IntPair> isolatedPointSet;
+
+  // Loop over key-value pairs
+  for (const auto& kv : adjacencyMap) {
+    // key: point
+    const auto& p1 = kv.first;
+    // value: neighbor point set
+    const auto& p1_neighbors = kv.second;
+
+    // Points that have no adjacencies are isolated points, with no incident
+    // edges.
+    if (p1_neighbors.empty()) {
+      isolatedPointSet.insert(p1);
+    }
+    // Otherwise, insert all the edges found into the set of edges.
+    // std::unordered_set only stores one element per key inserted,
+    // so inserting the same key multiple times does nothing. You could
+    // count the number of unique edges this way. Since we're interpreting
+    // IntPairPair (a pair of IntPair) as an undirected edge here, we need
+    // to be careful to ensure unique representation: For any points A and B,
+    // the edge (A,B) is the same as the edge (B,A). To keep an edge key
+    // consistent regardless of which direction it is viewed from, an ordering
+    // is imposed on the endpoints using the "<" operator. Note that we can
+    // compare two IntPair with "<" because STL gives us an implementation
+    // of "<" for std::pair<int,int> by default.
+    else {
+      for (const auto& p2 : p1_neighbors) {
+        IntPairPair edge;
+        if (p1 < p2) {
+          edge = std::make_pair(p1, p2);
+        } else {
+          // If the edge key looks "backwards," then flip it for uniformity.
+          // That is, the same undirected edge (A,B) and (B,A) will always be
+          // recorded as (A,B).
+          edge = std::make_pair(p2, p1);
+        }
+        edgeSet.insert(edge);
+      }
+    }
+  }
+
+  numEdges = edgeSet.size();
+
   return numEdges;
 }
 
@@ -92,6 +136,10 @@ void GridGraph::removePoint(const IntPair& p1) {
   // TODO: Your code here!
   // =======================================================================
 
+  for (auto point : originalNeighbors) {
+    removeEdge(p1, point);
+  }
+
   // Finally, for the one point we are removing, erase the point key itself
   // from adjacencyMap directly. (There is no other GridGraph helper function
   // for this, because that's what we're implementing right now! We need to
@@ -100,6 +148,8 @@ void GridGraph::removePoint(const IntPair& p1) {
   // =======================================================================
   // TODO: Your code here!
   // =======================================================================
+
+  adjacencyMap.erase(p1);
 }
 
 // =========================================================================
