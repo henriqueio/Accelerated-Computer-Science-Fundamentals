@@ -247,8 +247,8 @@ std::list<IntPair> graphBFS(const IntPair& start, const IntPair& goal,
   // other graph search algorithms like Dijkstra's algorithm do need to use such
   // a record. Remember: with std::unordered_map, the first time we look up a
   // key with [], it will be
-  //  inserted if it doesn't exist yet. Also, its initial int value will be 0 by
-  //  default.
+  // inserted if it doesn't exist yet. Also, its initial int value will be 0 by
+  // default.
   std::unordered_map<IntPair, int> dist;
 
   // Set of graph vertices that have already been visited. (In this case, by
@@ -257,8 +257,8 @@ std::list<IntPair> graphBFS(const IntPair& start, const IntPair& goal,
   // but not necessarily removed from the queue yet.) This lets us avoid
   // re-enqueueing graph vertices that we've already enqueued for exploration.
   // (For further optimization, we could just use pred to query whether a vertex
-  //  has been discovered previously, but using this separate set is more
-  //  explicit for the sake of explaining the concepts here.)
+  // has been discovered previously, but using this separate set is more
+  // explicit for the sake of explaining the concepts here.)
   std::unordered_set<IntPair> visitedSet;
 
   // This "dequeued" set isn't strictly part of the traditional BFS algorithm,
@@ -270,7 +270,7 @@ std::list<IntPair> graphBFS(const IntPair& start, const IntPair& goal,
   // Check for an erroneous problem specification, in case we made a simple
   // mistake. (Note that for puzzleBFS, the PuzzleState constructors already
   // check for obviously
-  //  invalid configurations, so you don't need to do this.)
+  // invalid configurations, so you don't need to do this.)
   if (!graph.hasPoint(start))
     throw std::runtime_error("Starting point doesn't exist in graph");
   if (!graph.hasPoint(goal))
@@ -351,14 +351,14 @@ std::list<IntPair> graphBFS(const IntPair& start, const IntPair& goal,
     // TODO: Your code here!
     // We'll need to loop over the neighbors that are the points adjacent to
     // curPoint. Get a copy of the set of neighbors we're going to loop over.
-    GridGraph::NeighborSet neighbors;  // Change this...
+    GridGraph::NeighborSet neighbors = graph.adjacencyMap.at(curPoint);
     // =====================================================================
 
     for (auto neighbor : neighbors) {
       // ==================================================================
       // TODO: Your code here!
       // Check whether the neighbor has already been visited.
-      bool neighborWasAlreadyVisited = false;  // Change this...
+      bool neighborWasAlreadyVisited = visitedSet.count(neighbor);
       // ==================================================================
 
       // If this adjacent vertex has NOT been visited before, we will visit it
@@ -372,12 +372,15 @@ std::list<IntPair> graphBFS(const IntPair& start, const IntPair& goal,
         // since curPoint has just led to the discovery of this neighbor for
         // the first time.
         // ...
+        pred[neighbor] = curPoint;
 
         // Add neighbor to the visited set.
         // ...
+        visitedSet.insert(neighbor);
 
         // Push neighbor into the exploration queue.
         // ...
+        exploreQ.push(neighbor);
 
         // ================================================================
 
